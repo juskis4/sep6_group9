@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace webApplication.Models
 {
@@ -10,8 +11,10 @@ namespace webApplication.Models
         [Required]
         public string Name { get; set; }
         
-        [Required]
-        [Range(0, 9999)]
-        public int Birth { get; set; }
+        public int? Birth { get; set; }
+
+        // Navigation properties
+        public virtual ICollection<Star> StarredMovies { get; set; } = new HashSet<Star>();
+        public virtual ICollection<Director> DirectedMovies { get; set; } = new HashSet<Director>();
     }
 }

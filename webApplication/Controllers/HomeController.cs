@@ -1,4 +1,6 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -20,9 +22,28 @@ namespace webApplication.Controllers
 
         public IActionResult Index()
         {
-            var movies = this._context.Movies.Include("Rating");
+            //var movies = this._context.Movies.Include("Rating");
+            try
+            {
+                var canConnect = _context.Database.CanConnect();
+                if (canConnect)
+                {
+                    Console.WriteLine("Connection successful!");
+                    var moviesCount = _context.Movies.Count();
+                    Console.WriteLine($"There are {moviesCount} movies.");
+                }
+                else
+                {
+                    Console.WriteLine("Unable to connect to the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while trying to connect to the database: {ex.Message}");
+            }
+
             //NOT good to return whole dataset, remove IDs and such first
-            return View(movies);
+            return View(null);
         }
 
         public IActionResult Privacy()
@@ -37,4 +58,3 @@ namespace webApplication.Controllers
         }
     }
 }
-

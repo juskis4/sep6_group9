@@ -6,14 +6,14 @@ namespace webApplication.Models
 {
     public class Star
     {
-        [Key]
         [ForeignKey("Movie")]
-        [Range(0, 99999)]
         public int MovieId { get; set; }
         
         [ForeignKey("Person")]
         public int PersonId { get; set; }
-        
-        public Person Person { get; set; }
+
+        // Navigation properties
+        public virtual Movie Movie { get; set; }
+        public virtual Person Person { get; set; }
     }
 }
