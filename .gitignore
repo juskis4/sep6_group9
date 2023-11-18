@@ -3,3 +3,33 @@ obj/
 /packages/
 riderModule.iml
 /_ReSharper.Caches/
+
+#Compiled Source:
+.dll
+.exe
+.pdb
+
+#Build Results:
+[Bb]uild/
+[Ll]og/
+
+#Miscellaneous
+.cache
+.bak
+.tmp
+.log
+Thumbs.db
+
+#Environment Files:
+appsettings.json
+appsettings.Development.json
+appsettings.Production.json
+*.config
+
+#Rider
+/.idea/
+/*.iml
+
+#Log Files:
+*.log
+*.trc

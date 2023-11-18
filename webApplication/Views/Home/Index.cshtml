@@ -1,8 +1,32 @@
 ﻿@{
-    ViewData["Title"] = "Home Page";
+    ViewData["Title"] = "Movie Social Platform";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Movie platform for Movie lovers</p>
+<div class="container">
+    <header>
+        <h1>Welcome to Movie Social Platform</h1>
+        <nav>
+            <ul>
+                <li><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li><a asp-controller="User" asp-action="Lists">My Lists</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section>
+            <h2>Featured Movies</h2>
+            <!-- Display featured movies here -->
+        </section>
+
+        <section>
+            <h2>Top User Lists</h2>
+            <!-- Display top user-generated lists here -->
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; @DateTime.Now.Year Movie Social Platform</p>
+    </footer>
 </div>

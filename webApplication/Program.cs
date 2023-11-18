@@ -1,11 +1,18 @@
 using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using webApplication.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddDbContext<MovieDataContext>(
+    o => o.UseNpgsql(builder.Configuration.GetConnectionString("MoviesDb"))
+);
 
 var app = builder.Build();
 
