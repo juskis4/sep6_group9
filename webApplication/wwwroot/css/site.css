@@ -13,9 +13,6 @@ html {
   min-height: 100%;
 }
 
-/* site.css */
-
-/* Add your CSS styles here */
 body {
   font-family: Arial, sans-serif;
   background-color: #f0f0f0;
@@ -26,7 +23,10 @@ header {
   padding: 10px;
 }
 
-/* site.css or webApplication.styles.css */
+a {
+  text-decoration: none;
+}
+
 .navbar-custom {
   background-color: #E8E8E8;
 }
@@ -50,12 +50,11 @@ header {
   color: #96939B;
 }
 
-/* Add more CSS styles for other elements as needed */
 .card {
   background-color: #1C1C1C;
   color: white;
-  max-width: 300px; /* Set a max-width for the card */
-  margin: 0 auto; /* This will center the card in the column */
+  max-width: 300px; 
+  margin: 0 auto; 
 }
 
 .card .badge {
@@ -79,14 +78,12 @@ header {
   border: none;
 }
 
-/* This ensures the image covers the top part of the card and doesn't stretch */
 .card-img-top {
   width: 100%;
   height: auto;
   object-fit: cover;
 }
 
-/* Adjust padding and margins as needed */
 .card-body {
   padding: 1rem;
 }
@@ -94,3 +91,5 @@ header {
 .card-title h5 {
   margin: 0;
 }
+
+

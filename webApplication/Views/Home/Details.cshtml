@@ -1,0 +1,12 @@
+﻿@model webApplication.ViewModels.MovieViewModel
+
+<div class="container">
+    <h1>@Model.Title (@Model.Year)</h1>
+    <img src="@Model.Details.Poster" alt="Poster fpr @Model.Title"/>
+    <p>@Model.Year</p>
+    <p>@Model.Rating?.DbValue</p>
+    <p><strong>Genre:</strong> @Model.Details.Genre</p>
+    <p><strong>Plot:</strong> @Model.Details.Plot</p>
+    <p><strong>Director:</strong> @Model.Details.Director</p>
+    <!-- TODO Add all movie details -->
+</div>
