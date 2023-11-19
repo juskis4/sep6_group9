@@ -22,4 +22,8 @@
       <Folder Include="Migrations" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Include="wwwroot\14532417_max.jpg" />
+    </ItemGroup>
+
 </Project>

@@ -8,11 +8,14 @@ namespace webApplication.Models
     public class Movie
     {
         [Key]
+        [Column("id")]
         public int Id { get; set; }
 
         [Required]
+        [Column("title")]
         public string Title { get; set; }
         
+        [Column("year")]
         public int? Year { get; set; }
 
         // Navigation properties
