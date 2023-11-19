@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using webApplication.Data;
+using webApplication.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,8 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MovieDataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+
+builder.Services.AddHttpClient<IMovieService, MovieService>();
 
 var app = builder.Build();
 

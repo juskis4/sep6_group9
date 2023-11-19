@@ -9,11 +9,11 @@
             <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
                 <a href="@Url.Action("Details", "Home", new { id = movie.Id })" class="btn-primary">
                 <div class="card h-100" style="background-color: #1C1C1C; color: white;">
-                    <img class="card-img-top" src="14532417_max.jpg" alt="@movie.Title image">
+                    <img class="card-img-top" src="@movie.Details.Poster" alt="@movie.Title image">
                     <div class="card-body">
                         <div class="card-title d-flex justify-content-between align-items-center">
                             <h6>@movie.Title</h6>
-                            <span class="badge bg-warning text-dark">@movie.Rating?.Value <i class="fas fa-star"></i></span>
+                            <span class="badge bg-warning text-dark">@movie.Rating?.DbValue <i class="fas fa-star"></i></span>
                         </div>
                         <p class="card-text">@movie.Year</p>
                         <div class="mt-4">

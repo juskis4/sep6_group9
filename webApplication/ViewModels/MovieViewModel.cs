@@ -10,5 +10,8 @@ namespace webApplication.ViewModels
         public RatingViewModel Rating { get; set; }
         public List<PersonViewModel> Stars { get; set; }
         public List<PersonViewModel> Directors { get; set; }
+        
+        
+        public MovieDetailsViewModel Details { get; set; }
     }
 }
