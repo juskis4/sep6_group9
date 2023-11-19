@@ -27,8 +27,7 @@ namespace webApplication.Controllers
         {
             var totalMoviesCount = await _context.Movies.CountAsync();
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
-
-            // Ensure the current page isn't out of range
+            
             page = Math.Max(1, Math.Min(page, totalPages));
 
             var movies = await _context.Movies
@@ -78,6 +77,51 @@ namespace webApplication.Controllers
         public IActionResult Privacy()
         {
             return View();
+        }
+        
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var movie = await _context.Movies
+                .Include(m => m.Rating) // Assuming you have a navigation property for Rating
+                // Add other necessary includes for related data
+                .FirstOrDefaultAsync(m => m.Id == id);
+
+            if (movie == null)
+            {
+                return NotFound();
+            }
+
+            var movieViewModel = new MovieViewModel
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Year = movie.Year,
+                Rating = new RatingViewModel
+                {
+                    MovieId = movie.Id,
+                    Value = movie.Rating.RatingValue,
+                    Votes = movie.Rating.Votes
+                },
+                Stars = movie.Stars.Select(s => new PersonViewModel
+                {
+                    Id = s.Person.Id,
+                    Name = s.Person.Name,
+                    BirthYear = s.Person.Birth
+                }).ToList(),
+                Directors = movie.Directors.Select(d => new PersonViewModel
+                {
+                    Id = d.Person.Id,
+                    Name = d.Person.Name,
+                    BirthYear = d.Person.Birth
+                }).ToList()
+            };
+
+            return View(movieViewModel);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
