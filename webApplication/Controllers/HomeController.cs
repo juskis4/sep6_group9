@@ -182,8 +182,7 @@ namespace webApplication.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-
-            // Perform the search operation
+            
             IQueryable<Movie> movieQuery = _context.Movies.Where(m => EF.Functions.ILike(m.Title, $"%{query}%"));
 
             var totalMoviesCount = await movieQuery.CountAsync();
@@ -239,7 +238,6 @@ namespace webApplication.Controllers
             
             await Task.WhenAll(fetchPosterTasks);
             
-            // Reuse the Index view to display the search results
             return View("Index", model);
         }
     }
