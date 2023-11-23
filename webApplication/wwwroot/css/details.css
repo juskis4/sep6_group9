@@ -1,0 +1,12 @@
+﻿.card-header {
+    background-color: #FC814A;
+    color: white;
+}
+
+.img-fluid {
+    max-height: 400px; 
+}
+
+.card-body h3 {
+    color: #FC814A; 
+}
