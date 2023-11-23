@@ -1,12 +1,114 @@
 ﻿@model webApplication.ViewModels.MovieViewModel
 
-<div class="container">
-    <h1>@Model.Title (@Model.Year)</h1>
-    <img src="@Model.Details.Poster" alt="Poster fpr @Model.Title"/>
-    <p>@Model.Year</p>
-    <p>@Model.Rating?.DbValue</p>
-    <p><strong>Genre:</strong> @Model.Details.Genre</p>
-    <p><strong>Plot:</strong> @Model.Details.Plot</p>
-    <p><strong>Director:</strong> @Model.Details.Director</p>
-    <!-- TODO Add all movie details -->
+<link rel="stylesheet" href="~/css/details.css" asp-append-version="true"/>
+
+@{
+    ViewData["Title"] = "Movie Details";
+}
+
+<div class="container mt-4">
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4" style="max-width: 940px;">
+                <div class="row g-0">
+                    <div class="col-md-4">
+                        <img src="@Model.Details.Poster" class="img-fluid rounded-start" alt="@Model.Title Poster">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h3 class="card-title">@Model.Title (@Model.Year)</h3>
+                            <p class="card-text"><strong>Rated:</strong> @Model.Details.Rated</p>
+                            <p class="card-text"><strong>Released:</strong> @Model.Details.Released</p>
+                            <p class="card-text"><strong>Runtime:</strong> @Model.Details.Runtime</p>
+                            <p class="card-text"><strong>Genre:</strong> @Model.Details.Genre</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+            <div class="col-12">
+                <div class="row g-0">
+                    <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Director</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Director</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Writer</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Writer</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Actors</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Actors</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Languages</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Language</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Country</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Country</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Awards</div>
+                                <div class="card-body">
+                                    <p class="card-text">@Model.Details.Awards</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">IMDb Rating</div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Rating:</strong>@Model.Details.ImdbRating</p>
+                                    <p class="card-text"><strong>Votes:</strong>@Model.Details.ImdbVotes</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 col-lg-4 mb-3">
+                            <div class="card h-100">
+                                <div class="card-header">Ratings</div>
+                                <div class="card-body">
+                                    <p class="card-text"><strong>Metascore:</strong>@Model.Details.Metascore</p>
+                                    @if (Model.Details.Ratings != null && Model.Details.Ratings.Any())
+                                    {
+                                        foreach (var rating in Model.Details.Ratings)
+                                        {
+                                            <p class="card-text"><strong>@rating.Source:</strong> @rating.Value</p>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <p class="card-text">No ratings available.</p>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+    </div>
 </div>
