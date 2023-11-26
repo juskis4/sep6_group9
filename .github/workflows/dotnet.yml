@@ -1,0 +1,25 @@
+name: .NET
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3 # Check out the code from your repository
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v3 # Set up the .NET environment
+      with:
+        dotnet-version: 6.0.x # Specify the desired .NET version
+    - name: Restore dependencies
+      run: dotnet restore # Restore project dependencies
+    - name: Build
+      run: dotnet build --no-restore # Build the project
+    - name: Test
+      run: dotnet test --no-build --verbosity normal # Run tests
