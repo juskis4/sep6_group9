@@ -10,6 +10,7 @@ namespace webApplication.Services
     {
         private readonly HttpClient _httpClient;
         private readonly string _apiKey = "";
+        //delete when commiting + don't commit appsettings.json 220d1d34
 
         public MovieService(HttpClient httpClient)
         {
