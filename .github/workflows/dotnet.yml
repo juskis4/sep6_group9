@@ -13,13 +13,28 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3 # Check out the code from your repository
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3 # Set up the .NET environment
       with:
-        dotnet-version: 6.0.x # Specify the desired .NET version
+        dotnet-version: '6.0.x' # Specify the desired .NET version
+
+    - name: Cache NuGet packages
+      uses: actions/cache@v2
+      with:
+        path: ~/.nuget/packages
+        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-nuget-
+
     - name: Restore dependencies
       run: dotnet restore # Restore project dependencies
+
+    - name: Clean
+      run: dotnet clean # Clean the solution
+
     - name: Build
       run: dotnet build --no-restore # Build the project
+
     - name: Test
-      run: dotnet test --no-build --verbosity normal # Run tests
+      run: dotnet test --no-build --verbosity detailed # Run tests
