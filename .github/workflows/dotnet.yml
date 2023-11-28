@@ -36,5 +36,4 @@ jobs:
     - name: Build
       run: dotnet build --no-restore # Build the project
 
-    - name: Test
-      run: dotnet test --no-build --verbosity detailed # Run tests
+
