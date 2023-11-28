@@ -7,5 +7,7 @@ namespace webApplication.Services
     {
         Task<MovieDetailsViewModel> GetMovieDetailsAsync(int movieId);
         Task<string?> GetMoviePosterAsync(int movieId);
+
+        Task<MovieListViewModel> GetSearchResultsAsync(string query, int page);
     }
 }
