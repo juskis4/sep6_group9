@@ -18,6 +18,7 @@ builder.Services.AddDbContext<MovieDataContext>(
 builder.Services.AddHttpClient<IMovieService, MovieService>();
 builder.Services.AddScoped<IMovieDataContext, MovieDataContext>();
 
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

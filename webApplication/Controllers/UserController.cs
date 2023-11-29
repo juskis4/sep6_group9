@@ -9,6 +9,8 @@ namespace webApplication.Controllers
     public class UserController : Controller
     {
         private readonly UserDataContext _dbContext;
+        
+        
 
        public IActionResult Lists()
         {

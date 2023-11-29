@@ -1,5 +1,7 @@
 ﻿@model webApplication.ViewModels.RegisterViewModel
-
+@{
+    Layout = "RegistrationLayout.cshtml";
+}
 <h1>Register</h1>
 
 @using (Html.BeginForm("Register", "User", FormMethod.Post))
