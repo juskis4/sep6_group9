@@ -6,9 +6,9 @@ using webApplication.Models;
 
 namespace webApplication.Data
 {
-    public class MovieDataContext : DbContext
+    public class MovieDataContext : DbContext, IMovieDataContext
     {
-        public DbSet<Movie> Movies { get; set; }
+        public virtual DbSet<Movie> Movies { get; set; }
         public DbSet<Star> Stars { get; set; }
         public DbSet<Director> Directors { get; set; }
         public DbSet<Person> People { get; set; }
