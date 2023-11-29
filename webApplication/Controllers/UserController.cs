@@ -10,12 +10,7 @@ namespace webApplication.Controllers
     {
         private readonly UserDataContext _dbContext;
 
-        public UserController(UserDataContext dbContext)
-        {
-            _dbContext = dbContext;
-        }
-        
-        public IActionResult Lists()
+       public IActionResult Lists()
         {
             // Add logic here to fetch and display user-specific lists of movies.
             return View();
@@ -44,6 +39,13 @@ namespace webApplication.Controllers
                 .FirstOrDefault(u => u.Username == username && u.Password == password);
             return user != null;
         }
+        [HttpGet]
+        public IActionResult Register()
+        {
+            // Render the registration form
+            return View();
+        }
+        
         [HttpPost]
         public IActionResult Register(RegisterViewModel model)
         {
