@@ -16,57 +16,27 @@ namespace webApplication.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly MovieDataContext _context;
         private readonly IMovieService _movieService;
+        private readonly IMovieDbService _movieDbService;
 
         private const int PageSize = 12;
 
-        public HomeController(ILogger<HomeController> logger, MovieDataContext context, IMovieService movieService)
+        public HomeController(ILogger<HomeController> logger, IMovieService movieService,
+                                IMovieDbService movieDbService)
         {
             _logger = logger;
-            _context = context;
             _movieService = movieService;
+            _movieDbService = movieDbService;
         }
 
         public async Task<IActionResult> Index(int page = 1)
         {
-            var totalMoviesCount = await _context.Movies.CountAsync();
+            var totalMoviesCount = await _movieDbService.GetMovieCountAsync();
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
 
             page = Math.Max(1, Math.Min(page, totalPages));
 
-            var movies = await _context.Movies
-                .OrderBy(m => m.Title)
-                .Skip((page - 1) * PageSize)
-                .Take(PageSize)
-                .Select(m =>
-                    new MovieViewModel
-                    {
-                        Id = m.Id,
-                        Title = m.Title,
-                        Year = m.Year,
-                        Rating = m.Rating == null
-                            ? null
-                            : new RatingViewModel
-                            {
-                                MovieId = m.Id,
-                                DbValue = m.Rating.RatingValue,
-                                Votes = m.Rating.Votes
-                            },
-                        Stars = m.Stars.Select(s => new PersonViewModel
-                        {
-                            Id = s.Person.Id,
-                            Name = s.Person.Name,
-                            BirthYear = s.Person.Birth
-                        }).ToList(),
-                        Directors = m.Directors.Select(d => new PersonViewModel
-                        {
-                            Id = d.Person.Id,
-                            Name = d.Person.Name,
-                            BirthYear = d.Person.Birth
-                        }).ToList()
-                    })
-                .ToListAsync();
+            var movies = await _movieDbService.GetMoviesWithPagination(page, PageSize);
             
             var model = new MovieListViewModel
             {
@@ -121,41 +91,8 @@ namespace webApplication.Controllers
                 return NotFound();
             }
 
-            var movie = await _context.Movies
-                .Include(m => m.Rating) 
-                //TODO Add other necessary includes for related data
-                .FirstOrDefaultAsync(m => m.Id == id);
-
-            if (movie == null)
-            {
-                return NotFound();
-            }
-
-            var movieViewModel = new MovieViewModel
-            {
-                Id = movie.Id,
-                Title = movie.Title,
-                Year = movie.Year,
-                Rating = movie.Rating != null ? new RatingViewModel
-                {
-                    MovieId = movie.Id,
-                    DbValue = movie.Rating.RatingValue,
-                    Votes = movie.Rating.Votes
-                } : null, 
-                Stars = movie.Stars?.Select(s => new PersonViewModel
-                {
-                    Id = s.Person.Id,
-                    Name = s.Person.Name,
-                    BirthYear = s.Person.Birth
-                }).ToList() ?? new List<PersonViewModel>(), 
-                Directors = movie.Directors?.Select(d => new PersonViewModel
-                {
-                    Id = d.Person.Id,
-                    Name = d.Person.Name,
-                    BirthYear = d.Person.Birth
-                }).ToList() ?? new List<PersonViewModel>() 
-            };
-
+            MovieViewModel movieViewModel = await _movieDbService.GetMovieAsync(id);
+            
             try
             {
                 var movieDetails = await _movieService.GetMovieDetailsAsync(id.Value);
@@ -182,8 +119,8 @@ namespace webApplication.Controllers
             {
                 return RedirectToAction(nameof(Index));
             }
-            
-            IQueryable<Movie> movieQuery = _context.Movies.Where(m => EF.Functions.ILike(m.Title, $"%{query}%"));
+
+            IQueryable<Movie> movieQuery = await _movieDbService.GetSearchedMoviesAsync(query);
 
             var totalMoviesCount = await movieQuery.CountAsync();
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
