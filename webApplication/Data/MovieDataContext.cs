@@ -12,7 +12,8 @@ namespace webApplication.Data
         public DbSet<Star> Stars { get; set; }
         public DbSet<Director> Directors { get; set; }
         public DbSet<Person> People { get; set; }
-
+        
+        public DbSet<User> Users { get; set; }
         public MovieDataContext(DbContextOptions<MovieDataContext> options) : base(options)
         {
             

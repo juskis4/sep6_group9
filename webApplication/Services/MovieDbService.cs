@@ -17,52 +17,7 @@ namespace webApplication.Services
         {
             _context = context;
         }
-    
-        // public async Task<int> GetTotalMoviesCountAsync()
-        // {
-        //     return await _context.Movies.CountAsync();
-        // }
-        //
-        // public async Task<List<MovieViewModel>> GetMoviesAsync(int skip, int take)
-        // {
-        //     return await _context.Movies
-        //         .OrderBy(m => m.Title)
-        //         .Skip(skip)
-        //         .Take(take)
-        //         .Select(m => new MovieViewModel
-        //         {
-        //             // Your existing conversion logic here...
-        //         })
-        //         .ToListAsync();
-        // }
-        //
-        // public async Task<MovieViewModel> GetMovieAsync(int? id)
-        // {
-        //     var movie = await _context.Movies
-        //         .Include(m => m.Rating)
-        //         //TODO: Add other necessary includes for related data
-        //         .FirstOrDefaultAsync(m => m.Id == id);
-        //
-        //     if (movie == null) return null;
-        //
-        //     // Conversion logic here...
-        // }
-        //
-        // public async Task<IEnumerable<MovieViewModel>> SearchMoviesAsync(string query, int skip, int take)
-        // {
-        //     IQueryable<Movie> movieQuery = _context.Movies.Where(m => EF.Functions.ILike(m.Title, $"%{query}%"));
-        //
-        //     return await movieQuery
-        //         .OrderBy(m => m.Title)
-        //         .Skip(skip)
-        //         .Take(take)
-        //         .Select(m => new MovieViewModel
-        //         {
-        //             // Your existing conversion logic here...
-        //         })
-        //         .ToListAsync();
-        // }
-        //
+        
         public async Task<IQueryable<Movie>> GetSearchedMoviesAsync(string query)
         {
             IQueryable<Movie> movieQuery = _context.Movies.Where(m => EF.Functions.ILike(m.Title, $"%{query}%"));
