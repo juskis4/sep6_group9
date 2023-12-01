@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -20,5 +21,8 @@ namespace webApplication.Models
         [MaxLength(255)]
         [Column("password")]
         public string Password { get; set; }
+        
+        //for 1 to many relationship navigation
+        public virtual ICollection<UserMovieList> UserFavoriteMovieList { get; set; }
     }
 }

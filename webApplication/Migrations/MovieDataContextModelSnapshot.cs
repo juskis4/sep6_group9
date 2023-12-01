@@ -145,6 +145,26 @@ namespace webApplication.Migrations
                     b.ToTable("users", "public");
                 });
 
+            modelBuilder.Entity("webApplication.Models.UserMovieList", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnOrder(0);
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("integer")
+                        .HasColumnOrder(1);
+
+                    b.Property<char>("Type")
+                        .HasColumnType("char(1)");
+
+                    b.HasKey("UserId", "MovieId");
+
+                    b.HasIndex("MovieId");
+
+                    b.ToTable("user_movie_list", "public");
+                });
+
             modelBuilder.Entity("webApplication.Models.Director", b =>
                 {
                     b.HasOne("webApplication.Models.Movie", "Movie")
@@ -194,6 +214,25 @@ namespace webApplication.Migrations
                     b.Navigation("Person");
                 });
 
+            modelBuilder.Entity("webApplication.Models.UserMovieList", b =>
+                {
+                    b.HasOne("webApplication.Models.Movie", "Movie")
+                        .WithMany("UserFavoriteMovieList")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webApplication.Models.User", "User")
+                        .WithMany("UserFavoriteMovieList")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("webApplication.Models.Movie", b =>
                 {
                     b.Navigation("Directors");
@@ -202,6 +241,8 @@ namespace webApplication.Migrations
                         .IsRequired();
 
                     b.Navigation("Stars");
+
+                    b.Navigation("UserFavoriteMovieList");
                 });
 
             modelBuilder.Entity("webApplication.Models.Person", b =>
@@ -209,6 +250,11 @@ namespace webApplication.Migrations
                     b.Navigation("DirectedMovies");
 
                     b.Navigation("StarredMovies");
+                });
+
+            modelBuilder.Entity("webApplication.Models.User", b =>
+                {
+                    b.Navigation("UserFavoriteMovieList");
                 });
 #pragma warning restore 612, 618
         }

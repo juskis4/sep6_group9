@@ -28,12 +28,22 @@ namespace webApplication.Data
             // Composite key for Star
             modelBuilder.Entity<Star>()
                 .HasKey(s => new {s.MovieId, s.PersonId});
-            
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.HasKey(e => e.UserId);
                 entity.Property(e => e.UserId).ValueGeneratedOnAdd();
             });
+            
+            // Composite key for UserMovieList
+            modelBuilder.Entity<UserMovieList>()
+                .HasKey(uml => new { uml.UserId, uml.MovieId });
+
+            modelBuilder.Entity<UserMovieList>()
+                .HasOne(uml => uml.User)
+                .WithMany(u => u.UserFavoriteMovieList)
+                .HasForeignKey(uml => uml.UserId);
+            
             
             modelBuilder.UseSerialColumns();
         }

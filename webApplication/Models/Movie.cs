@@ -22,5 +22,7 @@ namespace webApplication.Models
         public virtual ICollection<Star> Stars { get; set; } = new HashSet<Star>();
         public virtual ICollection<Director> Directors { get; set; } = new HashSet<Director>();
         public virtual Rating Rating { get; set; }
+        
+        public virtual ICollection<UserMovieList> UserFavoriteMovieList { get; set; }
     }
 }
