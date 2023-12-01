@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using webApplication.Models;
 using webApplication.Services;
 using webApplication.ViewModels;
 
@@ -23,12 +24,14 @@ namespace webApplication.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
+            ViewBag.HideNavBar = true;
             return View();
         }
 
         [HttpPost]
         public async Task<IActionResult> Login(UserViewModel model)
         {
+            ViewBag.HideNavBar = true;
             if (!ModelState.IsValid)
             {
                 return View(model);
@@ -54,6 +57,45 @@ namespace webApplication.Controllers
             }
 
             ModelState.AddModelError("", "Invalid login attempt.");
+            return View(model);
+        }
+        
+        [HttpGet]
+        public IActionResult Register()
+        {
+            ViewBag.HideNavBar = true;
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Register(RegisterViewModel model)
+        {
+            ViewBag.HideNavBar = true;
+            if (ModelState.IsValid)
+            {
+                
+                // Check if username already exists
+                var userExists = await _userService.VerifyUser(model.Username);
+                if (userExists)
+                {
+                    ModelState.AddModelError("Username", "Username already taken!");
+                    return View(model);
+                }
+
+                if (!model.Password.Equals(model.ConfirmPassword))
+                {
+                    ModelState.AddModelError("Password", "Passwords do not match!");
+                    return View(model);
+                }
+
+                var registerUser = await _userService.RegisterUser(model);
+                if (registerUser)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                
+            }
+            
             return View(model);
         }
     }

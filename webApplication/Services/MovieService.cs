@@ -44,5 +44,7 @@ namespace webApplication.Services
             throw new Exception("Error retrieving movie details.");
         }
     }
-
 }
+
+   
+    

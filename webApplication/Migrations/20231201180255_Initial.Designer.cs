@@ -12,8 +12,8 @@ using webApplication.Data;
 namespace webApplication.Migrations
 {
     [DbContext(typeof(MovieDataContext))]
-    [Migration("20231118121157_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20231201180255_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,87 +28,124 @@ namespace webApplication.Migrations
             modelBuilder.Entity("webApplication.Models.Director", b =>
                 {
                     b.Property<int>("MovieId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("movie_id");
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("person_id");
 
                     b.HasKey("MovieId", "PersonId");
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Directors");
+                    b.ToTable("directors", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Movie", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Title")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("title");
 
                     b.Property<int?>("Year")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("year");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Movies");
+                    b.ToTable("movies", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Person", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("Birth")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("birth");
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("text");
+                        .HasColumnType("text")
+                        .HasColumnName("name");
 
                     b.HasKey("Id");
 
-                    b.ToTable("People");
+                    b.ToTable("people", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Rating", b =>
                 {
                     b.Property<int>("MovieId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("movie_id");
 
                     b.Property<float>("RatingValue")
-                        .HasColumnType("real");
+                        .HasColumnType("real")
+                        .HasColumnName("rating");
 
                     b.Property<int>("Votes")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("votes");
 
                     b.HasKey("MovieId");
 
-                    b.ToTable("Rating");
+                    b.ToTable("ratings", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Star", b =>
                 {
                     b.Property<int>("MovieId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("movie_id");
 
                     b.Property<int>("PersonId")
-                        .HasColumnType("integer");
+                        .HasColumnType("integer")
+                        .HasColumnName("person_id");
 
                     b.HasKey("MovieId", "PersonId");
 
                     b.HasIndex("PersonId");
 
-                    b.ToTable("Stars");
+                    b.ToTable("stars", "public");
+                });
+
+            modelBuilder.Entity("webApplication.Models.User", b =>
+                {
+                    b.Property<Guid>("UserId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)")
+                        .HasColumnName("password");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("users", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Director", b =>
