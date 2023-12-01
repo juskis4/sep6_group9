@@ -30,6 +30,7 @@ namespace webApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> Login(UserViewModel model)
         {
+            ViewBag.HideNavBar = true;
             if (!ModelState.IsValid)
             {
                 return View(model);
