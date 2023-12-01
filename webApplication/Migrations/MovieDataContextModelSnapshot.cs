@@ -123,12 +123,10 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Password")
                         .IsRequired()

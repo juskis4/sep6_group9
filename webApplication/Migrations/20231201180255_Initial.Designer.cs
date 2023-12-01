@@ -12,8 +12,8 @@ using webApplication.Data;
 namespace webApplication.Migrations
 {
     [DbContext(typeof(MovieDataContext))]
-    [Migration("20231130185808_CreateTableForUser")]
-    partial class CreateTableForUser
+    [Migration("20231201180255_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -126,12 +126,10 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.User", b =>
                 {
-                    b.Property<int>("UserId")
+                    b.Property<Guid>("UserId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                        .HasColumnType("uuid")
                         .HasColumnName("user_id");
-
-                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("UserId"));
 
                     b.Property<string>("Password")
                         .IsRequired()

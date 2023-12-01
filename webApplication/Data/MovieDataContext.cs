@@ -28,7 +28,13 @@ namespace webApplication.Data
             // Composite key for Star
             modelBuilder.Entity<Star>()
                 .HasKey(s => new {s.MovieId, s.PersonId});
-
+            
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.HasKey(e => e.UserId);
+                entity.Property(e => e.UserId).ValueGeneratedOnAdd();
+            });
+            
             modelBuilder.UseSerialColumns();
         }
 
