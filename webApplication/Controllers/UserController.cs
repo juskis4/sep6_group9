@@ -23,6 +23,7 @@ namespace webApplication.Controllers
         [AllowAnonymous]
         public IActionResult Login()
         {
+            ViewBag.HideNavBar = true;
             return View();
         }
 
