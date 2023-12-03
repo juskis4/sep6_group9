@@ -1,0 +1,57 @@
+﻿@model webApplication.ViewModels.MovieListViewModel
+
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Your Favorite Movies";
+}
+
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+@if (TempData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">
+        @TempData["ErrorMessage"]
+    </div>
+}
+
+<h2>Your Favorite Movie List</h2>
+
+<div class="container mt-4">
+    @if (Model.Movies.Any())
+    {
+        foreach (var movie in Model.Movies)
+        {
+            <div class="row mb-3">
+                <div class="col-md-2">
+                    <img src="@movie.Details.Poster" class="img-fluid" alt="Poster" />
+                </div>
+                <div class="col-md-6 d-flex flex-column justify-content-center">
+                    <h4>@movie.Title</h4>
+                    <p>Rating: @movie.Rating?.DbValue</p>
+                </div>
+                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                    <p>@movie.Year</p>
+                </div>
+                <div class="col-md-2 d-flex align-items-center justify-content-center">
+                    <form asp-action="RemoveFromFavorites" asp-controller="User" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="movieId" value="@movie.Id" />
+                        <button type="submit" class="btn btn-danger">Remove</button>
+                    </form>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>You do not have any favorite movies added.</p>
+    }
+</div>
+

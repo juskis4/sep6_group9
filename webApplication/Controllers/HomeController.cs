@@ -209,7 +209,7 @@ namespace webApplication.Controllers
 
             if (isAdded)
             {
-                TempData["Message"] = "Movie added to Favorite List.";
+                TempData["Message"] = "Movie added to watchlist.";
             }
             else
             {
