@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using webApplication.Data;
@@ -11,9 +12,11 @@ using webApplication.Data;
 namespace webApplication.Migrations
 {
     [DbContext(typeof(MovieDataContext))]
-    partial class MovieDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231203143541_Initialv2")]
+    partial class Initialv2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

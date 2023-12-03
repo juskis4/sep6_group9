@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using webApplication.Data;
 using webApplication.Models;
@@ -61,6 +62,40 @@ namespace webApplication.Services
                 Console.WriteLine(e);
                 return false;
             }
+        }
+
+        public async Task<bool> AddMovieToFavoriteList(Guid userId, int movieId)
+        {
+            if (!await IsMovieAddedToList(userId, movieId))
+            {
+                try
+                {
+                    var userMovieList = new UserMovieList
+                    {
+                        UserId = userId,
+                        MovieId = movieId,
+                        Type = 'F' // 'F' for watchlist
+                    };
+
+                    _context.FavoriteMovieList.Add(userMovieList);
+                    await _context.SaveChangesAsync();
+
+                    return true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return false;
+                }
+            }
+            return false;
+        }
+
+        public async Task<bool> IsMovieAddedToList(Guid userId, int movieId)
+        {
+            var instance = await _context.FavoriteMovieList.FirstOrDefaultAsync
+                                        (uml => uml.UserId == userId && uml.MovieId == movieId);
+            return instance != null;
         }
     }
 }

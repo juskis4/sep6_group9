@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using webApplication.Models;
 using webApplication.ViewModels;
 
@@ -11,5 +12,7 @@ namespace webApplication.Services
         Task<bool> VerifyUser(string username);
 
         Task<bool> RegisterUser(RegisterViewModel model);
+
+        Task<bool> AddMovieToFavoriteList(Guid userId, int movieId);
     }
 }
