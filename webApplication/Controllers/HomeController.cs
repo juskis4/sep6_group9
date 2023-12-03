@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -32,14 +33,19 @@ namespace webApplication.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int? year = null)
         {
-            var totalMoviesCount = await _movieDbService.GetMovieCountAsync();
+            var totalMoviesCount = await _movieDbService.GetMovieCountAsync(year);
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
 
             page = Math.Max(1, Math.Min(page, totalPages));
 
-            var movies = await _movieDbService.GetMoviesWithPagination(page, PageSize);
+            var movies = await _movieDbService.GetMoviesWithPagination(page, PageSize, year);
+
+            if (year.HasValue)
+            {
+                movies = movies.Where(m => m.Year == year.Value);
+            }
             
             var model = new MovieListViewModel
             {
@@ -56,8 +62,11 @@ namespace webApplication.Controllers
             var fetchPosterTasks = model.Movies.Select(movie => SetMoviePoster(movie)).ToList();
             
             await Task.WhenAll(fetchPosterTasks);
-
-
+            
+            //For year select dropdown
+            ViewBag.Years = await _movieDbService.GetMovieYears();
+            if (year != null) ViewBag.SelectedYear = year;
+            
             return View(model);
         }
         
