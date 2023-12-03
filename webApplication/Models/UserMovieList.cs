@@ -7,16 +7,18 @@ namespace webApplication.Models
     [Table("user_movie_list", Schema = "public")]
     public class UserMovieList
     {
-        [Key, Column(Order = 0)]
+        [Key]
         [ForeignKey("User")]
+        [Column("user_id")]
         public Guid UserId { get; set; }
 
-        [Key, Column(Order = 1)]
+        [Key]
         [ForeignKey("Movie")]
+        [Column("movie_id")]
         public int MovieId { get; set; }
 
         [Required]
-        [Column(TypeName = "char(1)")]
+        [Column("type")]
         public char Type { get; set; } // Assuming 'F' or 'W' values
 
         public virtual User User { get; set; }

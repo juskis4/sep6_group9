@@ -14,6 +14,7 @@ namespace webApplication.Data
         public DbSet<Person> People { get; set; }
         
         public DbSet<User> Users { get; set; }
+        public DbSet<UserMovieList> FavoriteMovieList { get; set; }
         public MovieDataContext(DbContextOptions<MovieDataContext> options) : base(options)
         {
             

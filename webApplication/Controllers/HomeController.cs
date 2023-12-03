@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +19,17 @@ namespace webApplication.Controllers
         private readonly ILogger<HomeController> _logger;
         private readonly IMovieService _movieService;
         private readonly IMovieDbService _movieDbService;
+        private readonly IUserService _userService;
 
         private const int PageSize = 12;
 
         public HomeController(ILogger<HomeController> logger, IMovieService movieService,
-                                IMovieDbService movieDbService)
+                                IMovieDbService movieDbService, IUserService userService)
         {
             _logger = logger;
             _movieService = movieService;
             _movieDbService = movieDbService;
+            _userService = userService;
         }
 
         public async Task<IActionResult> Index(int page = 1)
@@ -177,5 +180,45 @@ namespace webApplication.Controllers
             
             return View("Index", model);
         }
+        
+        [HttpPost]
+        public async Task<IActionResult> AddToFavoritelist(int movieId)
+        {
+            // Check if the user is authenticated
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Redirect to login or handle the case when the user is not logged in
+                return RedirectToAction("Login", "User");
+            }
+
+            // Retrieve the UserId claim
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+
+            // Check if the UserId claim exists and is not null
+            if (userIdClaim == null)
+            {
+                // Handle the case when the UserId claim is not found
+                // This could be a redirect or showing an error message
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Parse the UserId claim value to Guid
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            var isAdded = await _userService.AddMovieToFavoriteList(userId, movieId);
+
+            if (isAdded)
+            {
+                TempData["Message"] = "Movie added to watchlist.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Movie is already in the Favorites list.";
+            }
+
+            return RedirectToAction("Index");
+        }
+
+
     }
 }
