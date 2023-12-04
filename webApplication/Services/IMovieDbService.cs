@@ -8,9 +8,9 @@ namespace webApplication.Services
 {
     public interface IMovieDbService
     {
-        Task<int> GetMovieCountAsync(int? year = null);
+        Task<int> GetMovieCountAsync(int? year = null, double? minRating = null);
 
-        Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12, int? year = null);
+        Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12, int? year = null, double? minRating = null);
         
         Task<MovieViewModel> GetMovieAsync(int? id);
 

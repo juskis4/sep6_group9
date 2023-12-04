@@ -5,6 +5,7 @@ using webApplication.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace webApplication.Services
@@ -24,29 +25,39 @@ namespace webApplication.Services
             return movieQuery;
         }
         
-        public async Task<int> GetMovieCountAsync(int? year = null)
+        public async Task<int> GetMovieCountAsync(int? year = null, double? minRating = null)
         {
+            var count = _context.Movies.AsQueryable();
+            
             if (year.HasValue)
             {
-                return await _context.Movies
-                    .Where(m => m.Year == year.Value)
-                    .CountAsync();
+                count = count.Where(m => m.Year == year.Value);
             }
-            
-            return await _context.Movies.CountAsync();
-            
+            if (minRating.HasValue)
+            {
+                count = count.Where(m => m.Rating.RatingValue >= minRating);
+            }
+
+            return await count.CountAsync();
+
         }
 
-        public async Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12, int? year = null)
+        public async Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12,
+            int? year = null, double? minRating = null)
         {
             var query = _context.Movies.AsQueryable();
-            
+
             if (year.HasValue)
             {
                 query = query.Where(m => m.Year == year.Value);
             }
-            
-            var movies = await query
+
+            if (minRating.HasValue)
+            {
+                query = query.Where(m => m.Rating.RatingValue >= minRating.Value);
+            }
+
+        var movies = await query
                 .OrderBy(m => m.Title)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
