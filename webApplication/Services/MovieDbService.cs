@@ -5,6 +5,7 @@ using webApplication.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace webApplication.Services
@@ -24,48 +25,73 @@ namespace webApplication.Services
             return movieQuery;
         }
         
-        public async Task<int> GetMovieCountAsync()
+        public async Task<int> GetMovieCountAsync(int? year = null, double? minRating = null)
         {
-            return await _context.Movies.CountAsync();
+            var count = _context.Movies.AsQueryable();
+            
+            if (year.HasValue)
+            {
+                count = count.Where(m => m.Year == year.Value);
+            }
+            if (minRating.HasValue)
+            {
+                count = count.Where(m => m.Rating.RatingValue >= minRating);
+            }
+
+            return await count.CountAsync();
+
         }
 
-        public async Task<List<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12)
+        public async Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12,
+            int? year = null, double? minRating = null)
         {
-            var movies = await _context.Movies
+            var query = _context.Movies.AsQueryable();
+
+            if (year.HasValue)
+            {
+                query = query.Where(m => m.Year == year.Value);
+            }
+
+            if (minRating.HasValue)
+            {
+                query = query.Where(m => m.Rating.RatingValue >= minRating.Value);
+            }
+
+        var movies = await query
                 .OrderBy(m => m.Title)
                 .Skip((page - 1) * PageSize)
                 .Take(PageSize)
-                .Select(m =>
-                    new MovieViewModel
+                .Select(m => new MovieViewModel
+                {
+                    Id = m.Id,
+                    Title = m.Title,
+                    Year = m.Year,
+                    Rating = m.Rating == null
+                        ? null
+                        : new RatingViewModel
+                        {
+                            MovieId = m.Id,
+                            DbValue = m.Rating.RatingValue,
+                            Votes = m.Rating.Votes
+                        },
+                    Stars = m.Stars.Select(s => new PersonViewModel
                     {
-                        Id = m.Id,
-                        Title = m.Title,
-                        Year = m.Year,
-                        Rating = m.Rating == null
-                            ? null
-                            : new RatingViewModel
-                            {
-                                MovieId = m.Id,
-                                DbValue = m.Rating.RatingValue,
-                                Votes = m.Rating.Votes
-                            },
-                        Stars = m.Stars.Select(s => new PersonViewModel
-                        {
-                            Id = s.Person.Id,
-                            Name = s.Person.Name,
-                            BirthYear = s.Person.Birth
-                        }).ToList(),
-                        Directors = m.Directors.Select(d => new PersonViewModel
-                        {
-                            Id = d.Person.Id,
-                            Name = d.Person.Name,
-                            BirthYear = d.Person.Birth
-                        }).ToList()
-                    })
+                        Id = s.Person.Id,
+                        Name = s.Person.Name,
+                        BirthYear = s.Person.Birth
+                    }).ToList(),
+                    Directors = m.Directors.Select(d => new PersonViewModel
+                    {
+                        Id = d.Person.Id,
+                        Name = d.Person.Name,
+                        BirthYear = d.Person.Birth
+                    }).ToList()
+                })
                 .ToListAsync();
 
             return movies;
         }
+
 
         public async Task<MovieViewModel> GetMovieAsync(int? id)
         {
@@ -105,6 +131,12 @@ namespace webApplication.Services
             }
             
             return null;
+        }
+        
+        public async Task<List<int?>> GetMovieYears()
+        {
+            var years = await _context.Movies.Select(m => m.Year).Distinct().OrderBy(y => y).ToListAsync();
+            return years;
         }
     }
 }

@@ -32,14 +32,19 @@ namespace webApplication.Controllers
             _userService = userService;
         }
 
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int page = 1, int? year = null, double? minRating = null)
         {
-            var totalMoviesCount = await _movieDbService.GetMovieCountAsync();
+            var totalMoviesCount = await _movieDbService.GetMovieCountAsync(year, minRating);
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
 
             page = Math.Max(1, Math.Min(page, totalPages));
 
-            var movies = await _movieDbService.GetMoviesWithPagination(page, PageSize);
+            var movies = await _movieDbService.GetMoviesWithPagination(page, PageSize, year, minRating);
+
+            if (year.HasValue)
+            {
+                movies = movies.Where(m => m.Year == year.Value);
+            }
             
             var model = new MovieListViewModel
             {
@@ -56,8 +61,14 @@ namespace webApplication.Controllers
             var fetchPosterTasks = model.Movies.Select(movie => SetMoviePoster(movie)).ToList();
             
             await Task.WhenAll(fetchPosterTasks);
-
-
+            
+            //For year select dropdown
+            ViewBag.Years = await _movieDbService.GetMovieYears();
+            if (year != null) ViewBag.SelectedYear = year;
+            
+            //For rating filtering
+            if (minRating != null) ViewBag.MinRating = minRating;
+            
             return View(model);
         }
         
@@ -173,7 +184,7 @@ namespace webApplication.Controllers
             {
                 movie.Details = new MovieDetailsViewModel(); 
             }
-            
+
             var fetchPosterTasks = model.Movies.Select(movie => SetMoviePoster(movie)).ToList();
             
             await Task.WhenAll(fetchPosterTasks);
@@ -184,25 +195,20 @@ namespace webApplication.Controllers
         [HttpPost]
         public async Task<IActionResult> AddToFavoritelist(int movieId)
         {
-            // Check if the user is authenticated
             if (!User.Identity.IsAuthenticated)
             {
-                // Redirect to login or handle the case when the user is not logged in
+                // Trow error message to login again
                 return RedirectToAction("Login", "User");
             }
-
-            // Retrieve the UserId claim
+            
             var userIdClaim = User.FindFirst(ClaimTypes.Name);
-
-            // Check if the UserId claim exists and is not null
+            
             if (userIdClaim == null)
             {
-                // Handle the case when the UserId claim is not found
-                // This could be a redirect or showing an error message
-                return RedirectToAction("Index", "Home");
+                // Trow error message to login again
+                return RedirectToAction("Login", "User");
             }
-
-            // Parse the UserId claim value to Guid
+            
             var userId = Guid.Parse(userIdClaim.Value);
 
             var isAdded = await _userService.AddMovieToFavoriteList(userId, movieId);
