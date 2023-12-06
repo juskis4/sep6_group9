@@ -24,5 +24,6 @@ namespace webApplication.Models
         
         //for 1 to many relationship navigation
         public virtual ICollection<UserMovieList> UserFavoriteMovieList { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

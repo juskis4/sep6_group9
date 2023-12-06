@@ -138,5 +138,12 @@ namespace webApplication.Services
             var years = await _context.Movies.Select(m => m.Year).Distinct().OrderBy(y => y).ToListAsync();
             return years;
         }
+        
+        public async Task<IEnumerable<Comment>> GetCommentsByMovieIdAsync(int movieId)
+        {
+            return await _context.Comments
+                .Where(c => c.MovieId == movieId)
+                .ToListAsync();
+        }
     }
 }

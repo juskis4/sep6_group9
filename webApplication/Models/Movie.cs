@@ -24,5 +24,6 @@ namespace webApplication.Models
         public virtual Rating Rating { get; set; }
         
         public virtual ICollection<UserMovieList> UserFavoriteMovieList { get; set; }
+        public virtual ICollection<Comment> Comments { get; set; }
     }
 }

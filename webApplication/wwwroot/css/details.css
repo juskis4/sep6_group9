@@ -3,10 +3,49 @@
     color: white;
 }
 
-.img-fluid {
-    max-height: 400px; 
-}
 
 .card-body h3 {
     color: #FC814A; 
 }
+
+.card {
+    margin: 10px;
+    width: 100%; 
+}
+
+.movie-card {
+    margin: 10px;
+}
+
+.container {
+    max-width: 1200px; /* Adjust the maximum width as needed */
+}
+
+.img-fluid {
+    max-height: 600px; /* Adjust the maximum height of the poster image */
+}
+
+.comments-sec {
+    margin-top: 25px;
+    margin-bottom: 10px;
+}
+
+.btn-primary {
+    background-color: #FC814A;
+    border: none;
+    line-height: 2.5;
+    padding: 0 20px;
+    border-radius: 25px;
+    display: block;
+    margin-top: 5px;
+    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #FF924C;
+}
+
+
+
+

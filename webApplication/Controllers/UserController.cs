@@ -47,6 +47,7 @@ namespace webApplication.Controllers
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserId.ToString()),
+                    new Claim("Username", model.Username)
                 };
 
                 var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
@@ -164,6 +165,47 @@ namespace webApplication.Controllers
             }
     
             return RedirectToAction("Profile");
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddComment(CommentViewModel model)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Redirect to login or handle the case when the user is not logged in
+                return RedirectToAction("Login", "User");
+            }
+
+            // Retrieve the UserId claim
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var usernameClaim = User.FindFirst("Username");
+
+            // Check if the UserId claim exists and is not null
+            if (userIdClaim == null || usernameClaim == null)
+            {
+                // Handle the case when the UserId or Username claim is not found
+                // This could be a redirect or showing an error message
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Parse the UserId claim value to Guid
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            if (ModelState.IsValid)
+            {
+                var comment = new Comment 
+                {
+                    MovieId = model.MovieId,
+                    UserId = userId, 
+                    Username = usernameClaim.Value,
+                    Content = model.Content
+                };
+
+                await _userService.AddCommentAsync(comment);
+            }
+
+            return RedirectToAction("Details", "Home",new { id = model.MovieId });
         }
 
     }

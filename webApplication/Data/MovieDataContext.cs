@@ -15,6 +15,8 @@ namespace webApplication.Data
         
         public DbSet<User> Users { get; set; }
         public DbSet<UserMovieList> FavoriteMovieList { get; set; }
+        
+        public DbSet<Comment> Comments { get; set; }
         public MovieDataContext(DbContextOptions<MovieDataContext> options) : base(options)
         {
             
@@ -45,6 +47,15 @@ namespace webApplication.Data
                 .WithMany(u => u.UserFavoriteMovieList)
                 .HasForeignKey(uml => uml.UserId);
             
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.Movie)
+                .WithMany(m => m.Comments)
+                .HasForeignKey(c => c.MovieId);
+            
+            modelBuilder.Entity<Comment>()
+                .HasOne(c => c.User)
+                .WithMany(u => u.Comments)
+                .HasForeignKey(c => c.UserId);
             
             modelBuilder.UseSerialColumns();
         }
