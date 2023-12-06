@@ -22,6 +22,44 @@ namespace webApplication.Migrations
 
             NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
 
+            modelBuilder.Entity("webApplication.Models.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("comment_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("content");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("integer")
+                        .HasColumnName("movie_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Comments");
+                });
+
             modelBuilder.Entity("webApplication.Models.Director", b =>
                 {
                     b.Property<int>("MovieId")
@@ -164,6 +202,25 @@ namespace webApplication.Migrations
                     b.HasIndex("MovieId");
 
                     b.ToTable("user_movie_list", "public");
+                });
+
+            modelBuilder.Entity("webApplication.Models.Comment", b =>
+                {
+                    b.HasOne("webApplication.Models.Movie", "Movie")
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webApplication.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("webApplication.Models.Director", b =>

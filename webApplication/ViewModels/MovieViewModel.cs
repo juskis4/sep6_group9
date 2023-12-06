@@ -13,5 +13,7 @@ namespace webApplication.ViewModels
         
         
         public MovieDetailsViewModel Details { get; set; }
+        
+        public IEnumerable<CommentViewModel> Comments { get; set; }
     }
 }

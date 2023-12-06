@@ -160,5 +160,11 @@ namespace webApplication.Services
             
             return false;
         }
+        
+        public async Task AddCommentAsync(Comment comment)
+        {
+            _context.Comments.Add(comment);
+            await _context.SaveChangesAsync();
+        }
     }
 }

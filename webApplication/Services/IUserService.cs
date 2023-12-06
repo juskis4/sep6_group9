@@ -19,5 +19,7 @@ namespace webApplication.Services
         Task<IEnumerable<MovieViewModel>> GetFavoriteMovies(Guid userId);
 
         Task<bool> RemoveMovieFromFavorites(Guid userId, int movieId);
+
+        Task AddCommentAsync(Comment comment);
     }
 }

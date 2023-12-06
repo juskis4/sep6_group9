@@ -18,5 +18,8 @@ namespace webApplication.Services
 
         Task<List<int?>> GetMovieYears();
 
+        Task<IEnumerable<Comment>> GetCommentsByMovieIdAsync(int movieId);
+
+
     }
 }

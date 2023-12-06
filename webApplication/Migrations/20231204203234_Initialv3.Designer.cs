@@ -12,8 +12,8 @@ using webApplication.Data;
 namespace webApplication.Migrations
 {
     [DbContext(typeof(MovieDataContext))]
-    [Migration("20231203143541_Initialv2")]
-    partial class Initialv2
+    [Migration("20231204203234_Initialv3")]
+    partial class Initialv3
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,44 @@ namespace webApplication.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseSerialColumns(modelBuilder);
+
+            modelBuilder.Entity("webApplication.Models.Comment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("comment_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseSerialColumn(b.Property<int>("CommentId"));
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("character varying(1000)")
+                        .HasColumnName("content");
+
+                    b.Property<int>("MovieId")
+                        .HasColumnType("integer")
+                        .HasColumnName("movie_id");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid")
+                        .HasColumnName("user_id");
+
+                    b.Property<string>("Username")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)")
+                        .HasColumnName("username");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("MovieId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("comments", "public");
+                });
 
             modelBuilder.Entity("webApplication.Models.Director", b =>
                 {
@@ -169,6 +207,25 @@ namespace webApplication.Migrations
                     b.ToTable("user_movie_list", "public");
                 });
 
+            modelBuilder.Entity("webApplication.Models.Comment", b =>
+                {
+                    b.HasOne("webApplication.Models.Movie", "Movie")
+                        .WithMany("Comments")
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webApplication.Models.User", "User")
+                        .WithMany("Comments")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Movie");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("webApplication.Models.Director", b =>
                 {
                     b.HasOne("webApplication.Models.Movie", "Movie")
@@ -239,6 +296,8 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.Movie", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Directors");
 
                     b.Navigation("Rating")
@@ -258,6 +317,8 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("UserFavoriteMovieList");
                 });
 #pragma warning restore 612, 618

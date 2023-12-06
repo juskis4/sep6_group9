@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Security.Claims;
@@ -97,7 +98,7 @@ namespace webApplication.Controllers
         {
             return View();
         }
-
+        
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -105,19 +106,36 @@ namespace webApplication.Controllers
                 return NotFound();
             }
 
-            MovieViewModel movieViewModel = await _movieDbService.GetMovieAsync(id);
-            
+            var movieViewModel = await _movieDbService.GetMovieAsync(id.Value);
+    
             try
             {
                 var movieDetails = await _movieService.GetMovieDetailsAsync(id.Value);
                 movieViewModel.Details = movieDetails;
+
+                var comments = await _movieDbService.GetCommentsByMovieIdAsync(id.Value);
+
+                if (comments != null)
+                {
+                    movieViewModel.Comments = comments.Select(c => new CommentViewModel
+                    {
+                        CommentId = c.CommentId,
+                        Username = c.Username, 
+                        Content = c.Content,
+                    }).ToList();
+                }
+                else
+                {
+                    //If there are no comments
+                    movieViewModel.Comments = new List<CommentViewModel>();
+                }
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error retrieving movie details.");
                 return NotFound();
             }
-            
+    
             return View(movieViewModel);
         }
 
