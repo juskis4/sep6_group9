@@ -19,6 +19,10 @@ namespace webApplication.Services
         Task<List<int?>> GetMovieYears();
 
         Task<IEnumerable<Comment>> GetCommentsByMovieIdAsync(int movieId);
+        
+        Task<PersonListViewModel> GetStarsWithPaginationAsync(int page, int PageSize = 12); 
+            
+        Task<int> GetStarsCountAsync();
 
 
     }
