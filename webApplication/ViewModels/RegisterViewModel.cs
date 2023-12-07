@@ -1,22 +1,21 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using webApplication.Data;
-using webApplication.Models;
 
-namespace webApplication.ViewModels;
-
-public class RegisterViewModel
+namespace webApplication.ViewModels
 {
-    public int Id { get; set; }
+    public class RegisterViewModel
+    {
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
 
-    [Required(ErrorMessage = "Username is required")]
-    public string Username { get; set; }
+        [Required]
+        [DataType(DataType.Password)]
+        [Display(Name = "Password")]
+        public string Password { get; set; }
 
-    [Required(ErrorMessage = "Password is required")]
-    [DataType(DataType.Password)]
-    public string Password { get; set; }
-
-    [Required(ErrorMessage = "Please confirm your password")]
-    [Compare("Password", ErrorMessage = "Passwords do not match")]
-    [DataType(DataType.Password)]
-    public string ConfirmPassword { get; set; }
+        [DataType(DataType.Password)]
+        [Display(Name = "Confirm password")]
+        [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
+        public string ConfirmPassword { get; set; }
+    }
 }

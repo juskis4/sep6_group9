@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using webApplication.Data;
@@ -11,9 +12,11 @@ using webApplication.Data;
 namespace webApplication.Migrations
 {
     [DbContext(typeof(MovieDataContext))]
-    partial class MovieDataContextModelSnapshot : ModelSnapshot
+    [Migration("20231204203234_Initialv3")]
+    partial class Initialv3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,7 +60,7 @@ namespace webApplication.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Comments");
+                    b.ToTable("comments", "public");
                 });
 
             modelBuilder.Entity("webApplication.Models.Director", b =>
@@ -207,13 +210,13 @@ namespace webApplication.Migrations
             modelBuilder.Entity("webApplication.Models.Comment", b =>
                 {
                     b.HasOne("webApplication.Models.Movie", "Movie")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("MovieId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("webApplication.Models.User", "User")
-                        .WithMany()
+                        .WithMany("Comments")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -293,6 +296,8 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.Movie", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("Directors");
 
                     b.Navigation("Rating")
@@ -312,6 +317,8 @@ namespace webApplication.Migrations
 
             modelBuilder.Entity("webApplication.Models.User", b =>
                 {
+                    b.Navigation("Comments");
+
                     b.Navigation("UserFavoriteMovieList");
                 });
 #pragma warning restore 612, 618

@@ -50,11 +50,14 @@ a {
   color: #96939B;
 }
 
-.card {
-  background-color: #1C1C1C;
+.card { 
+  background-color: #1C1C1C; 
   color: white;
-  max-width: 300px; 
-  margin: 0 auto; 
+  max-width: 300px;
+  display: flex; 
+  flex-direction: column; 
+  justify-content: space-between; 
+  height: 100%; 
 }
 
 .card .badge {
@@ -68,8 +71,13 @@ a {
   color: white;
 }
 
+.card .btn-primary, .card .btn-secondary {
+  background-color: #1C1C1C; 
+  border: none;
+}
+
 .card .btn-primary {
-  background-color: #4C4C4C;
+  background-color: #1C1C1C;
   border: none;
 }
 
@@ -81,15 +89,24 @@ a {
 .card-img-top {
   width: 100%;
   height: auto;
+  max-height: 400px;
   object-fit: cover;
 }
 
 .card-body {
   padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1; 
 }
 
-.card-title h5 {
-  margin: 0;
+.button-container {
+  background-color: #1C1C1C; 
 }
+
+.filtering-con{
+  margin-bottom: 15px;
+}
+
 
 

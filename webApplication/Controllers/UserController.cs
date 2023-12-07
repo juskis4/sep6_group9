@@ -1,80 +1,214 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using webApplication.Data;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using webApplication.Models;
+using webApplication.Services;
 using webApplication.ViewModels;
 
 namespace webApplication.Controllers
 {
     public class UserController : Controller
     {
-        private readonly UserDataContext _dbContext;
-        
-        
+        private readonly IUserService _userService;
+        private readonly IMovieService _movieService;
 
-       public IActionResult Lists()
+        public UserController(IUserService userService, IMovieService movieService)
         {
-            // Add logic here to fetch and display user-specific lists of movies.
-            return View();
+            _userService = userService;
+            _movieService = movieService;
         }
 
-        // Add more actions for user-related functionality as needed.
-
+        [HttpGet]
+        [AllowAnonymous]
         public IActionResult Login()
         {
+            ViewBag.HideNavBar = true;
             return View();
         }
 
         [HttpPost]
-        public IActionResult Login(LogInViewModel model)
+        public async Task<IActionResult> Login(UserViewModel model)
         {
-            if (IsValidUser(model.Username, model.Password))
+            ViewBag.HideNavBar = true;
+            if (!ModelState.IsValid)
             {
+                return View(model);
+            }
+
+            var user = await _userService.ValidateUserAsync(model.Username, model.Password);
+            if (user != null)
+            {
+                var claims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserId.ToString()),
+                    new Claim("Username", model.Username)
+                };
+
+                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+                var authProperties = new AuthenticationProperties
+                {
+                    AllowRefresh = true
+                };
+
+                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
+
                 return RedirectToAction("Index", "Home");
             }
-            ModelState.AddModelError(string.Empty, "Invalid login attempt");
+
+            ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
-        private bool IsValidUser(string username, string password)
-        {
-            var user = _dbContext.Users
-                .FirstOrDefault(u => u.Username == username && u.Password == password);
-            return user != null;
-        }
+        
         [HttpGet]
         public IActionResult Register()
         {
-            // Render the registration form
+            ViewBag.HideNavBar = true;
             return View();
         }
-        
+
         [HttpPost]
-        public IActionResult Register(RegisterViewModel model)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
+            ViewBag.HideNavBar = true;
             if (ModelState.IsValid)
             {
-                // Check if the username is already taken
-                if (_dbContext.Users.Any(u => u.Username == model.Username))
+                
+                // Check if username already exists
+                var userExists = await _userService.VerifyUser(model.Username);
+                if (userExists)
                 {
-                    ModelState.AddModelError("Username", "Username is already taken.");
+                    ModelState.AddModelError("Username", "Username already taken!");
                     return View(model);
                 }
-                
-                var newUser = new User()
+
+                if (!model.Password.Equals(model.ConfirmPassword))
                 {
-                    Username = model.Username,
-                    Password = model.Password,
-                    //do we hash the password? or is it enough like this?
+                    ModelState.AddModelError("Password", "Passwords do not match!");
+                    return View(model);
+                }
 
-                };
-
-                _dbContext.Users.Add(newUser);
-                _dbContext.SaveChanges();
-
-                return RedirectToAction("Login");
+                var registerUser = await _userService.RegisterUser(model);
+                if (registerUser)
+                {
+                    return RedirectToAction("Login", "User");
+                }
+                
             }
             
             return View(model);
         }
+
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Redirect to login or handle the case when the user is not logged in
+                return RedirectToAction("Login", "User");
+            }
+
+            // Retrieve the UserId claim
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+
+            // Check if the UserId claim exists and is not null
+            if (userIdClaim == null)
+            {
+                // Handle the case when the UserId claim is not found
+                // This could be a redirect or showing an error message
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Parse the UserId claim value to Guid
+            var userId = Guid.Parse(userIdClaim.Value);
+            
+            var favoriteMovies = await _userService.GetFavoriteMovies(userId);
+            
+            var model = new MovieListViewModel
+            {
+                Movies = favoriteMovies,
+            };
+            
+            foreach (var movie in model.Movies)
+            {
+                movie.Details = new MovieDetailsViewModel(); 
+            }
+
+            foreach (var movie in model.Movies)
+            {
+                movie.Details.Poster = await _movieService.GetMoviePosterAsync(movie.Id);
+            }
+
+            return View(model);
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> RemoveFromFavorites(int movieId)
+        {
+            var userId = Guid.Parse(User.FindFirst(ClaimTypes.Name).Value);
+
+            bool success = await _userService.RemoveMovieFromFavorites(userId, movieId);
+    
+            if (success)
+            {
+                TempData["SuccessMessage"] = "Movie removed from favorites.";
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Could not remove the movie from favorites.";
+            }
+    
+            return RedirectToAction("Profile");
+        }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> AddComment(CommentViewModel model)
+        {
+            if (!User.Identity.IsAuthenticated)
+            {
+                // Redirect to login or handle the case when the user is not logged in
+                return RedirectToAction("Login", "User");
+            }
+
+            // Retrieve the UserId claim
+            var userIdClaim = User.FindFirst(ClaimTypes.Name);
+            var usernameClaim = User.FindFirst("Username");
+
+            // Check if the UserId claim exists and is not null
+            if (userIdClaim == null || usernameClaim == null)
+            {
+                // Handle the case when the UserId or Username claim is not found
+                // This could be a redirect or showing an error message
+                return RedirectToAction("Index", "Home");
+            }
+
+            // Parse the UserId claim value to Guid
+            var userId = Guid.Parse(userIdClaim.Value);
+
+            if (ModelState.IsValid)
+            {
+                var comment = new Comment 
+                {
+                    MovieId = model.MovieId,
+                    UserId = userId, 
+                    Username = usernameClaim.Value,
+                    Content = model.Content
+                };
+
+                await _userService.AddCommentAsync(comment);
+            }
+
+            return RedirectToAction("Details", "Home",new { id = model.MovieId });
+        }
+
     }
 }
+
+

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,15 @@ builder.Services.AddDbContext<MovieDataContext>(
     o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
-builder.Services.AddHttpClient<IMovieService, MovieService>();
-builder.Services.AddScoped<IMovieDataContext, MovieDataContext>();
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+    });
 
+builder.Services.AddHttpClient<IMovieService, MovieService>();
+builder.Services.AddScoped<IMovieDbService, MovieDbService>();
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -34,15 +41,20 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=User}/{action=LogIn}/{id?}");
+app.UseEndpoints(endpoints =>
+{
+    // Default route for unauthenticated users
+    endpoints.MapControllerRoute(
+        name: "Login",
+        pattern: "{controller=User}/{action=Login}/{id?}");
 
-app.MapControllerRoute(
-    name: "register",
-    pattern: "{controller=Register}/{action=Index}/{id?}");
-
+    // Secondary route for other actions
+    endpoints.MapControllerRoute(
+        name: "default",
+        pattern: "{controller=Home}/{action=Index}/{id?}");
+});
 
 app.Run();
