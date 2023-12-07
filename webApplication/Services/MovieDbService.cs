@@ -42,6 +42,12 @@ namespace webApplication.Services
 
         }
 
+        public async Task<int> GetStarsCountAsync()
+        {
+            var count = await _context.Stars.CountAsync();
+            return count;
+        }
+
         public async Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12,
             int? year = null, double? minRating = null)
         {
@@ -145,5 +151,48 @@ namespace webApplication.Services
                 .Where(c => c.MovieId == movieId)
                 .ToListAsync();
         }
+        
+        public async Task<PersonListViewModel> GetStarsWithPaginationAsync(int page, int pageSize = 12)
+        {
+            var paginatedStarIds = await _context.Stars
+                .Select(s => s.Person.Id)
+                .Distinct()
+                .OrderBy(id => id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var paginatedStars = new List<PersonViewModel>();
+            foreach (var starId in paginatedStarIds)
+            {
+                var star = await _context.People.FindAsync(starId);
+                var movies = await _context.Stars
+                    .Where(s => s.PersonId == starId)
+                    .Select(s => s.Movie)
+                    .Select(m => new MovieViewModel
+                    {
+                        Id = m.Id,
+                        Title = m.Title,
+                        Year = m.Year,
+                    })
+                    .ToListAsync();
+
+                paginatedStars.Add(new PersonViewModel
+                {
+                    Id = star.Id,
+                    Name = star.Name,
+                    BirthYear = star.Birth,
+                    Movies = movies
+                });
+            }
+            
+            var personListViewModel = new PersonListViewModel
+            {
+                People = paginatedStars
+            };
+
+            return personListViewModel;
+        }
+
     }
 }
