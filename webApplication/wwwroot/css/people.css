@@ -1,0 +1,33 @@
+﻿.custom-row {
+    background-color: #272829;
+    color: white;
+    line-height: 1;
+}
+
+.btn-primary{
+    background-color: #ff9e00;
+    color: #272829;
+    text-align: center;
+    border-radius: 0;
+}
+
+.btn-primary:hover {
+    background-color: #ff6d00;
+    color: #272829;
+}
+
+.img-custom{
+    max-height: 100px;
+}
+
+.btn-primary:focus {
+    background-color: #ff9e00; 
+    color: #272829;
+    outline: none;
+}
+
+.btn-primary:hover, .btn-primary:focus {
+    background-color: #ff6d00;
+    color: #272829;
+    border-color: #ff6d00; 
+}

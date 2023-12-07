@@ -24,6 +24,10 @@ namespace webApplication.Services
             
         Task<int> GetStarsCountAsync();
 
+        Task<PersonListViewModel> GetDirectorsWithPaginationAsync(int page, int pageSize = 12);
+
+        Task<int> GetDirectorsCountAsync();
+
 
     }
 }

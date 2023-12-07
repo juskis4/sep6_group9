@@ -47,6 +47,12 @@ namespace webApplication.Services
             var count = await _context.Stars.CountAsync();
             return count;
         }
+        
+        public async Task<int> GetDirectorsCountAsync()
+        {
+            var count = await _context.Directors.CountAsync();
+            return count;
+        }
 
         public async Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12,
             int? year = null, double? minRating = null)
@@ -193,6 +199,51 @@ namespace webApplication.Services
 
             return personListViewModel;
         }
+        
+        public async Task<PersonListViewModel> GetDirectorsWithPaginationAsync(int page, int pageSize = 12)
+        {
+            var paginatedDirectorIds = await _context.Directors
+                .Select(d => d.Person.Id)
+                .Distinct()
+                .OrderBy(id => id)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var paginatedDirectors = new List<PersonViewModel>();
+            foreach (var directorId in paginatedDirectorIds)
+            {
+                var director = await _context.People.FindAsync(directorId);
+                var movies = await _context.Directors
+                    .Where(d => d.PersonId == directorId)
+                    .Select(d => d.Movie)
+                    .Select(m => new MovieViewModel
+                    {
+                        Id = m.Id,
+                        Title = m.Title,
+                        Year = m.Year,
+                    })
+                    .ToListAsync();
+
+                paginatedDirectors.Add(new PersonViewModel
+                {
+                    Id = director.Id,
+                    Name = director.Name,
+                    BirthYear = director.Birth, 
+                    Movies = movies
+                });
+            }
+
+            var personListViewModel = new PersonListViewModel
+            {
+                People = paginatedDirectors,
+                CurrentPage = page,
+                TotalPages = (int)Math.Ceiling((double)_context.Directors.Count() / pageSize)
+            };
+
+            return personListViewModel;
+        }
+
 
     }
 }
