@@ -35,6 +35,8 @@ jobs:
       run: dotnet clean # Clean the solution
 
     - name: Build app
-      run: dotnet build --no-restore # Build the project
-
+      run: dotnet build -c Release --no-restore # Build the project
+    
+    - name: Run automated Tests
+      run: dotnet test -c Release --no-build
 
