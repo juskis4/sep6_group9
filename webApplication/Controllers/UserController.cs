@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using webApplication.Models;
 using webApplication.Services;
 using webApplication.ViewModels;
+using IAuthenticationService = webApplication.Services.IAuthenticationService;
 
 namespace webApplication.Controllers
 {
@@ -17,11 +18,13 @@ namespace webApplication.Controllers
     {
         private readonly IUserService _userService;
         private readonly IMovieService _movieService;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UserController(IUserService userService, IMovieService movieService)
+        public UserController(IUserService userService, IMovieService movieService, IAuthenticationService authenticationService)
         {
             _userService = userService;
             _movieService = movieService;
+            _authenticationService = authenticationService;
         }
 
         [HttpGet]
@@ -44,26 +47,14 @@ namespace webApplication.Controllers
             var user = await _userService.ValidateUserAsync(model.Username, model.Password);
             if (user != null)
             {
-                var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserId.ToString()),
-                    new Claim("Username", model.Username)
-                };
-
-                var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-                var authProperties = new AuthenticationProperties
-                {
-                    AllowRefresh = true
-                };
-
-                await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, new ClaimsPrincipal(claimsIdentity), authProperties);
-
+                await _authenticationService.SignInUserAsync(user, HttpContext);
                 return RedirectToAction("Index", "Home");
             }
 
             ModelState.AddModelError("", "Invalid login attempt.");
             return View(model);
         }
+
         
         [HttpGet]
         public IActionResult Register()
