@@ -12,9 +12,14 @@ namespace webApplication.Services
 
         Task<IEnumerable<MovieViewModel>> GetMoviesWithPagination(int page, int PageSize = 12, int? year = null, double? minRating = null);
         
-        Task<MovieViewModel> GetMovieAsync(int? id);
+        Task<MovieViewModel?> GetMovieAsync(int? id);
 
-        Task<IQueryable<Movie>> GetSearchedMoviesAsync(string query);
+        
+        //Search
+        Task<IEnumerable<MovieViewModel>> GetSearchedMoviesWithPaginationAsync(string query, int page, int PageSize = 12);
+
+        Task<int> GetSearchedMoviesCountAsync(string query);
+        
 
         Task<List<int?>> GetMovieYears();
 

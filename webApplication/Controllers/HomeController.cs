@@ -115,20 +115,12 @@ namespace webApplication.Controllers
 
                 var comments = await _movieDbService.GetCommentsByMovieIdAsync(id.Value);
 
-                if (comments != null)
+                movieViewModel.Comments = comments.Select(c => new CommentViewModel
                 {
-                    movieViewModel.Comments = comments.Select(c => new CommentViewModel
-                    {
-                        CommentId = c.CommentId,
-                        Username = c.Username, 
-                        Content = c.Content,
-                    }).ToList();
-                }
-                else
-                {
-                    //If there are no comments
-                    movieViewModel.Comments = new List<CommentViewModel>();
-                }
+                    CommentId = c.CommentId,
+                    Username = c.Username, 
+                    Content = c.Content,
+                }).ToList();
             }
             catch (Exception ex)
             {
@@ -152,43 +144,11 @@ namespace webApplication.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            IQueryable<Movie> movieQuery = await _movieDbService.GetSearchedMoviesAsync(query);
-
-            var totalMoviesCount = await movieQuery.CountAsync();
+            var totalMoviesCount = await _movieDbService.GetSearchedMoviesCountAsync(query);
             var totalPages = (int) Math.Ceiling(totalMoviesCount / (double) PageSize);
             page = Math.Max(1, Math.Min(page, totalPages));
-
-            var movies = await movieQuery
-                .OrderBy(m => m.Title)
-                .Skip((page - 1) * PageSize)
-                .Take(PageSize)
-                .Select(m => new MovieViewModel
-                {
-                    Id = m.Id,
-                    Title = m.Title,
-                    Year = m.Year,
-                    Rating = m.Rating == null
-                        ? null
-                        : new RatingViewModel
-                        {
-                            MovieId = m.Id,
-                            DbValue = m.Rating.RatingValue,
-                            Votes = m.Rating.Votes
-                        },
-                    Stars = m.Stars.Select(s => new PersonViewModel
-                    {
-                        Id = s.Person.Id,
-                        Name = s.Person.Name,
-                        BirthYear = s.Person.Birth
-                    }).ToList(),
-                    Directors = m.Directors.Select(d => new PersonViewModel
-                    {
-                        Id = d.Person.Id,
-                        Name = d.Person.Name,
-                        BirthYear = d.Person.Birth
-                    }).ToList()
-                })
-                .ToListAsync();
+            
+            var movies = await _movieDbService.GetSearchedMoviesWithPaginationAsync(query, page, PageSize);
 
             var model = new MovieListViewModel
             {
@@ -203,7 +163,7 @@ namespace webApplication.Controllers
                 movie.Details = new MovieDetailsViewModel(); 
             }
 
-            var fetchPosterTasks = model.Movies.Select(movie => SetMoviePoster(movie)).ToList();
+            var fetchPosterTasks = model.Movies.Select(SetMoviePoster).ToList();
             
             await Task.WhenAll(fetchPosterTasks);
             
