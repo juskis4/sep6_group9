@@ -144,7 +144,7 @@ namespace webApplication.Services
         }
 
 
-        public async Task<MovieViewModel> GetMovieAsync(int? id)
+        public async Task<MovieViewModel?> GetMovieAsync(int? id)
         {
             if (id != null)
             {

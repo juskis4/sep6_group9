@@ -5,5 +5,6 @@
     &lt;TestId&gt;xUnit::D9A0900A-1C8A-4AE2-9AE9-3109B4931D72::net6.0::UserControllerTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D9A0900A-1C8A-4AE2-9AE9-3109B4931D72::net6.0::webApplication.Tests.Unit.UserControllerTests&lt;/TestId&gt;&#xD;
     &lt;TestId&gt;xUnit::D9A0900A-1C8A-4AE2-9AE9-3109B4931D72::net6.0::webApplication.Tests.Unit.PeopleControllerTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::D9A0900A-1C8A-4AE2-9AE9-3109B4931D72::net6.0::webApplication.Tests.Unit.HomeControllerTests&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
