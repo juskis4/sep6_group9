@@ -14,7 +14,12 @@ namespace webApplication.Services
         
         Task<MovieViewModel> GetMovieAsync(int? id);
 
-        Task<IQueryable<Movie>> GetSearchedMoviesAsync(string query);
+        
+        //Search
+        Task<IEnumerable<MovieViewModel>> GetSearchedMoviesWithPaginationAsync(string query, int page, int PageSize = 12);
+
+        Task<int> GetSearchedMoviesCountAsync(string query);
+        
 
         Task<List<int?>> GetMovieYears();
 
