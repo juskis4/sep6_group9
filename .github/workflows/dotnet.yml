@@ -8,8 +8,6 @@ on:
 
 env:
   DOTNET_VERSION: '6.0.x'
-  PROJECT_ID: 'your-gcp-project-id' # Replace with your GCP project ID
-  IMAGE_NAME: 'your-app-name' # Replace with your application name
   GCR_HOSTNAME: 'gcr.io'
 
 jobs:
