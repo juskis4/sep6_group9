@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -27,8 +28,11 @@ builder.Services.AddScoped<IMovieDbService, MovieDbService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IAuthenticationService, AuthenticationService>();
 
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
+
+app.MapHealthChecks("/health");
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
@@ -63,4 +67,6 @@ app.UseEndpoints(endpoints =>
         pattern: "{controller=People}/{action=Stars}/{id?}");
 });
 
-app.Run();
+// Listen on the port defined by the PORT environment variable, default to 5000 if not set
+var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+app.Run($"http://*:{port}");

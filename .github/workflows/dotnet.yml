@@ -8,38 +8,59 @@ on:
 
 env:
   DOTNET_VERSION: '6.0.x'
+  PROJECT_ID: 'your-gcp-project-id' # Replace with your GCP project ID
+  IMAGE_NAME: 'your-app-name' # Replace with your application name
+  GCR_HOSTNAME: 'gcr.io'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
-    - name: Check out code
-      uses: actions/checkout@v4 # Check out the code from your repository
+      - name: Setup .NET 6
+          uses: actions/setup-dotnet@v3 # Set up the .NET environment
+          with:
+            dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Setup .NET 6
-      uses: actions/setup-dotnet@v3 # Set up the .NET environment
-      with:
-        dotnet-version: ${{ env.DOTNET_VERSION }}
+            - name: Cache NuGet packages
+              uses: actions/cache@v3
+              with:
+                path: ~/.nuget/packages
+                key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+                restore-keys: |
+                  ${{ runner.os }}-nuget-
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v3
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+            - name: Restore dependencies
+              run: dotnet restore # Restore project dependencies
 
-    - name: Restore dependencies
-      run: dotnet restore # Restore project dependencies
+            - name: Clean
+              run: dotnet clean # Clean the solution
 
-    - name: Clean
-      run: dotnet clean # Clean the solution
+            - name: Build app
+              run: dotnet build -c Release --no-restore # Build the project
 
-    - name: Build app
-      run: dotnet build -c Release --no-restore # Build the project
-    
-    - name: Run automated Tests
-      run: dotnet test -c Release --no-build
+            - name: Run automated Tests
+              run: dotnet test -c Release --no-build
 
+      # Docker build and push
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v1
+
+      - name: Authenticate to Google Cloud
+        uses: 'google-github-actions/auth@v2'
+        with:
+          credentials_json: '${{ secrets.GCP_SA_KEY }}' 
+
+      - name: Build and push Docker image to GCR
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest
+
+      # Deploy to Google App Engine
+      - name: Deploy to Google App Engine
+        run: |
+          gcloud auth configure-docker
+          gcloud components install gcloud
+          gcloud app deploy --image-url=${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest --project ${{ secrets.PROJECT_ID }}
