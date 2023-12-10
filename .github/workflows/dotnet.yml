@@ -60,8 +60,7 @@ jobs:
         run: gcloud auth list
 
       - name: Print full Docker image name
-        run:
-          echo "Full image name: ${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest"
+        run: echo "Full image name: ${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest"
 
       - name: Build and push Docker image to GCR
         uses: docker/build-push-action@v5
