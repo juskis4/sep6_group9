@@ -66,4 +66,4 @@ jobs:
         
         # Deploy to Google App Engine
       - name: Deploy Docker image
-          run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --platform managed
+        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --platform managed
