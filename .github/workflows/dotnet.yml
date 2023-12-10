@@ -58,6 +58,9 @@ jobs:
       - name: Configure Docker
         run: gcloud auth configure-docker --quiet
 
+      - name: AAAAAAAAAAAAAA
+        run: ls 
+      
       - name: Build Docker image
         run: docker build -f sep6-group9/Dockerfile -t $IMAGE_NAME .
         
