@@ -7,6 +7,9 @@ on:
     branches: [ "master" ]
 
 env:
+  PROJECT_ID: ${{ secrets.PROJECT_ID }}
+  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+  IMAGE_NAME: ${{ secrets.IMAGE_NAME }}
   DOTNET_VERSION: '6.0.x'
   GCR_HOSTNAME: 'gcr.io'
 
@@ -51,7 +54,7 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: 'google-github-actions/auth@v2'
         with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}'
+          credentials_json: '${{ env.GCP_SA_KEY }}'
       
       - name: 'Set up Cloud SDK'
         uses: 'google-github-actions/setup-gcloud@v1'
@@ -59,21 +62,17 @@ jobs:
       - name: Test Authentication
         run: gcloud auth list
 
-      - name: Print full Docker image name
-        run:
-          echo "Full image name: ${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest"
-
       - name: Build and push Docker image to GCR
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
           push: true
-          tags: ${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest
+          tags: ${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest
 
       # Deploy to Google App Engine
       - name: Deploy to Google App Engine
         run: |
           gcloud auth configure-docker
           gcloud components install gcloud
-          gcloud app deploy --image-url=${{ env.GCR_HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_NAME }}:latest --project ${{ secrets.PROJECT_ID }}
+          gcloud app deploy --image-url=${{ env.GCR_HOSTNAME }}/${{ env.PROJECT_ID }}/${{ env.IMAGE_NAME }}:latest --project ${{ env.PROJECT_ID }}
