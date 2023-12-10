@@ -12,32 +12,37 @@ env:
 
 jobs:
   build:
+
     runs-on: ubuntu-latest
+
     steps:
+      - name: Check out code
+        uses: actions/checkout@v4 # Check out the code from your repository
+
       - name: Setup .NET 6
-          uses: actions/setup-dotnet@v3 # Set up the .NET environment
-          with:
-            dotnet-version: ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3 # Set up the .NET environment
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-            - name: Cache NuGet packages
-              uses: actions/cache@v3
-              with:
-                path: ~/.nuget/packages
-                key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-                restore-keys: |
-                  ${{ runner.os }}-nuget-
+      - name: Restore dependencies
+        run: dotnet restore # Restore project dependencies
 
-            - name: Restore dependencies
-              run: dotnet restore # Restore project dependencies
+      - name: Clean
+        run: dotnet clean # Clean the solution
 
-            - name: Clean
-              run: dotnet clean # Clean the solution
+      - name: Build app
+        run: dotnet build -c Release --no-restore # Build the project
 
-            - name: Build app
-              run: dotnet build -c Release --no-restore # Build the project
-
-            - name: Run automated Tests
-              run: dotnet test -c Release --no-build
+      - name: Run automated Tests
+        run: dotnet test -c Release --no-build
 
       # Docker build and push
       - name: Set up Docker
