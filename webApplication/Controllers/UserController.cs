@@ -34,6 +34,14 @@ namespace webApplication.Controllers
             ViewBag.HideNavBar = true;
             return View();
         }
+        
+        [Authorize]
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            return RedirectToAction("Login", "User");
+        }
 
         [HttpPost]
         public async Task<IActionResult> Login(UserViewModel model)
