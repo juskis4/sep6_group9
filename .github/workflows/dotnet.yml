@@ -1,4 +1,4 @@
-name: CI/CD Pipelines
+name: CI Pipeline
 
 on:
   push:
@@ -7,11 +7,7 @@ on:
     branches: [ "master" ]
 
 env:
-  PROJECT_ID: ${{ secrets.PROJECT_ID }}
-  GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
-  IMAGE_NAME: gcr.io/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GCP_APP_NAME }}
   DOTNET_VERSION: '6.0.x'
-  GCR_HOSTNAME: 'gcr.io'
 
 jobs:
   build:
@@ -46,25 +42,3 @@ jobs:
 
       - name: Run automated Tests
         run: dotnet test -c Release --no-build
-
-      # Docker
-      - name: Authenticate to Google Cloud
-        uses: 'google-github-actions/auth@v2'
-        with:
-          credentials_json: '${{ secrets.GCP_SA_KEY }}' 
-
-      - name: Configure Docker
-        run: gcloud auth configure-docker --quiet
-      
-      - name: Build Docker image
-        run: docker build -f Dockerfile -t $IMAGE_NAME .
-
-      - name: Test Authentication
-        run: gcloud auth list
-        
-      - name: Push Docker image
-        run: docker push $IMAGE_NAME 
-        
-        # Deploy to Google App Engine
-      - name: Deploy Docker image
-        run: gcloud run deploy ${{ secrets.GCP_PROJECT_ID }} --image $IMAGE_NAME --region us-central1 --platform managed
