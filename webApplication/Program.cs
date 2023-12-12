@@ -14,7 +14,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<MovieDataContext>(
-    o => o.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection"))
+    o => o.UseNpgsql(Environment.GetEnvironmentVariable("DBConnectionString"))
 
 );
 
