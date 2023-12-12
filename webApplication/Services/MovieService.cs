@@ -15,7 +15,10 @@ namespace webApplication.Services
         public MovieService(HttpClient httpClient, IConfiguration configuration)
         {
             _httpClient = httpClient;
-            _apiKey = configuration["OMDbApi:ApiKey"];
+            _apiKey = Environment.GetEnvironmentVariable("OMDbApi"); 
+            
+            //Used to initialize _apiKey when working locally 
+            //configuration["OMDbApi:ApiKey"];
         }
 
         public async Task<MovieDetailsViewModel?> GetMovieDetailsAsync(int movieId)
