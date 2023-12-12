@@ -14,7 +14,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddDbContext<MovieDataContext>(
-    o => o.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+    o => o.UseNpgsql(Environment.GetEnvironmentVariable("DefaultConnection"))
+
 );
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
