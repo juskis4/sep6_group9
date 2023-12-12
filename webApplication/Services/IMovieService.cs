@@ -5,7 +5,7 @@ namespace webApplication.Services
 {
     public interface IMovieService
     {
-        Task<MovieDetailsViewModel> GetMovieDetailsAsync(int movieId);
+        Task<MovieDetailsViewModel?> GetMovieDetailsAsync(int movieId);
         Task<string?> GetMoviePosterAsync(int movieId);
 
         

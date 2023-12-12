@@ -8,7 +8,7 @@ namespace webApplication.Services
 {
     public interface IUserService
     {
-        Task<User> ValidateUserAsync(string username, string password);
+        Task<User?> ValidateUserAsync(string username, string password);
 
         Task<bool> VerifyUser(string username);
 
