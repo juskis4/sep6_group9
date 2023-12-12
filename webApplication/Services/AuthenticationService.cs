@@ -8,8 +8,17 @@ using webApplication.Models;
 
 namespace webApplication.Services
 {
+    /// <summary>
+    /// Provides authentication services for signing in users
+    /// </summary>
     public class AuthenticationService : IAuthenticationService
     {
+        /// <summary>
+        /// Signs in a user asynchronously
+        /// </summary>
+        /// <param name="user">The user to be signed in</param>
+        /// <param name="httpContext">The current HTTP context</param>
+        /// <returns>task</returns>
         public async Task SignInUserAsync(User user, HttpContext httpContext)
         {
             var claims = new List<Claim>

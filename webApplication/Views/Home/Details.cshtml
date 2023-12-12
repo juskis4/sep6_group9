@@ -12,22 +12,22 @@
         <div class="col-12 ">
             <div class="row g-0">
                 <div class="col-md-4 d-flex justify-content-center align-items-center">
-                    <img src="@Model.Details.Poster" class="img-fluid rounded-start" alt="@Model.Title Poster">
+                    <img src="@Model.Details?.Poster" class="img-fluid rounded-start" alt="@Model.Title Poster">
                 </div>
                 <div class="col-md-8">
                     <div class="card-body">
                         <h3 class="card-title">@Model.Title (@Model.Year)</h3>
                         <p class="card-text">
-                            <strong>Rated:</strong> @Model.Details.Rated
+                            <strong>Rated:</strong> @Model.Details?.Rated
                         </p>
                         <p class="card-text">
-                            <strong>Released:</strong> @Model.Details.Released
+                            <strong>Released:</strong> @Model.Details?.Released
                         </p>
                         <p class="card-text">
-                            <strong>Runtime:</strong> @Model.Details.Runtime
+                            <strong>Runtime:</strong> @Model.Details?.Runtime
                         </p>
                         <p class="card-text">
-                            <strong>Genre:</strong> @Model.Details.Genre
+                            <strong>Genre:</strong> @Model.Details?.Genre
                         </p>
                     </div>
                 </div>
@@ -43,7 +43,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Director</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Director</p>
+                            <p class="card-text">@Model.Details?.Director</p>
                         </div>
                     </div>
                 </div>
@@ -51,7 +51,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Writer</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Writer</p>
+                            <p class="card-text">@Model.Details?.Writer</p>
                         </div>
                     </div>
                 </div>
@@ -59,7 +59,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Actors</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Actors</p>
+                            <p class="card-text">@Model.Details?.Actors</p>
                         </div>
                     </div>
                 </div>
@@ -67,7 +67,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Languages</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Language</p>
+                            <p class="card-text">@Model.Details?.Language</p>
                         </div>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Country</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Country</p>
+                            <p class="card-text">@Model.Details?.Country</p>
                         </div>
                     </div>
                 </div>
@@ -83,7 +83,7 @@
                     <div class="card h-100 mx-auto">
                         <div class="card-header">Awards</div>
                         <div class="card-body">
-                            <p class="card-text">@Model.Details.Awards</p>
+                            <p class="card-text">@Model.Details?.Awards</p>
                         </div>
                     </div>
                 </div>
@@ -92,10 +92,10 @@
                         <div class="card-header">IMDb Rating</div>
                         <div class="card-body">
                             <p class="card-text">
-                                <strong>Rating: </strong>@Model.Details.ImdbRating
+                                <strong>Rating: </strong>@Model.Details?.ImdbRating
                             </p>
                             <p class="card-text">
-                                <strong>Votes: </strong>@Model.Details.ImdbVotes
+                                <strong>Votes: </strong>@Model.Details?.ImdbVotes
                             </p>
                         </div>
                     </div>
@@ -105,9 +105,9 @@
                         <div class="card-header">Ratings</div>
                         <div class="card-body">
                             <p class="card-text">
-                                <strong>Metascore: </strong>@Model.Details.Metascore
+                                <strong>Metascore: </strong>@Model.Details?.Metascore
                             </p>
-                            @if (Model.Details.Ratings != null && Model.Details.Ratings.Any())
+                            @if (Model.Details?.Ratings != null && Model.Details.Ratings.Any())
                             {
                                 foreach (var rating in Model.Details.Ratings)
                                 {
@@ -135,9 +135,7 @@
     
     <div class="row movie-card">
         <div class="col-12">
-            <!-- Display Comments -->
             <div class="comments-section">
-                <!-- Each comment as a full-width card -->
                 @foreach (var comment in Model.Comments)
                 {
                     <div class="card-body">
@@ -148,13 +146,11 @@
             </div>
         </div>
     </div>
-
-    <!-- Comment Form -->
-    @if (User.Identity.IsAuthenticated)
+    
+    @if (User.Identity!.IsAuthenticated)
     {
         <div class="row movie-card">
             <div class="col-12">
-                <!-- Comment Submission Form -->
                 <div class="card-body">
                     <h5 class="card-title">Leave a Comment</h5>
                     <form asp-action="AddComment" asp-controller="User">
@@ -169,5 +165,4 @@
             </div>
         </div>
     }
-
 </div>
