@@ -12,7 +12,7 @@ namespace webApplication.ViewModels
         public List<PersonViewModel> Directors { get; set; }
         
         
-        public MovieDetailsViewModel Details { get; set; }
+        public MovieDetailsViewModel? Details { get; set; }
         
         public IEnumerable<CommentViewModel> Comments { get; set; }
     }

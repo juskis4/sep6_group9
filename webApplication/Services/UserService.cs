@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using webApplication.Data;
 using webApplication.Models;
@@ -10,6 +9,10 @@ using webApplication.ViewModels;
 
 namespace webApplication.Services
 {
+    /// <summary>
+    /// Service providing user-related operations such as validation, registration, commenting,
+    /// and managing favorite movies
+    /// </summary>
     public class UserService : IUserService
     {
         private readonly MovieDataContext _context;
@@ -19,7 +22,13 @@ namespace webApplication.Services
             _context = context;
         }
 
-        public async Task<User> ValidateUserAsync(string username, string password)
+        /// <summary>
+        /// Validates a user's credentials
+        /// </summary>
+        /// <param name="username">User's username</param>
+        /// <param name="password">User's password</param>
+        /// <returns>The validated user or null if validation fails</returns>
+        public async Task<User?> ValidateUserAsync(string username, string password)
         {
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == username);
@@ -34,15 +43,26 @@ namespace webApplication.Services
 
         private bool VerifyPassword(string enteredPassword, string storedPassword)
         {
+            //Placeholder for future password hashing function
             return enteredPassword == storedPassword; 
         }
 
+        /// <summary>
+        /// Verifies if a user exists based on username
+        /// </summary>
+        /// <param name="username">Username to check</param>
+        /// <returns>Boolean indicating whether the user exists</returns>
         public async Task<bool> VerifyUser(string username)
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Username == username);
             return user != null;
         }
 
+        /// <summary>
+        /// Registers a new user
+        /// </summary>
+        /// <param name="model">Registration details</param>
+        /// <returns>Boolean indicating successful registration</returns>
         public async Task<bool> RegisterUser(RegisterViewModel model)
         {
             var user = new User
@@ -66,6 +86,12 @@ namespace webApplication.Services
             }
         }
 
+        /// <summary>
+        /// Adds a movie to a user's favorite list
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <param name="movieId">Movie's ID</param>
+        /// <returns>Boolean indicating if the movie was successfully added</returns>
         public async Task<bool> AddMovieToFavoriteList(Guid userId, int movieId)
         {
             if (!await IsMovieAddedToList(userId, movieId))
@@ -93,13 +119,24 @@ namespace webApplication.Services
             return false;
         }
 
-        public async Task<bool> IsMovieAddedToList(Guid userId, int movieId)
+        /// <summary>
+        /// Checks if movie is already in the list
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <param name="movieId">Movie's ID</param>
+        /// <returns>Boolean indicating if the movie is already in the favorite list</returns>
+        private async Task<bool> IsMovieAddedToList(Guid userId, int movieId)
         {
             var instance = await _context.FavoriteMovieList.FirstOrDefaultAsync
                                         (uml => uml.UserId == userId && uml.MovieId == movieId);
             return instance != null;
         }
 
+        /// <summary>
+        /// Retrieves a user's favorite movies
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <returns>List of favorite movies</returns>
         public async Task<IEnumerable<MovieViewModel>> GetFavoriteMovies(Guid userId)
         {
             var favoriteMovieIds = await _context.FavoriteMovieList
@@ -138,6 +175,12 @@ namespace webApplication.Services
             return movies;
         }
         
+        /// <summary>
+        /// Removes a movie from a user's favorites
+        /// </summary>
+        /// <param name="userId">User's ID</param>
+        /// <param name="movieId">Movie's ID</param>
+        /// <returns>Boolean indicating successful removal</returns>
         public async Task<bool> RemoveMovieFromFavorites(Guid userId, int movieId)
         {
             try
@@ -161,6 +204,11 @@ namespace webApplication.Services
             return false;
         }
         
+        /// <summary>
+        /// Adds a comment to a movie
+        /// </summary>
+        /// <param name="comment">Comment to be added</param>
+        /// <returns>Task</returns>
         public async Task AddCommentAsync(Comment comment)
         {
             _context.Comments.Add(comment);

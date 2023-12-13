@@ -21,17 +21,30 @@
                 <div class="collapse navbar-collapse justify-content-between" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
                         <a class="nav-link" href="@Url.Action("Index", "Home")">Home</a>
-                        <a class="nav-link" href="#">Features</a>
+                        <a class="nav-link" href="@Url.Action("Stars", "People")">Stars</a>
+                        <a class="nav-link" href="@Url.Action("Directors", "People")">Directors</a>
                         <a class="nav-link" asp-controller="User" asp-action="Profile">Profile</a>
                     </div>
-                    <form class="form-inline my-2 my-lg-0" asp-controller="Home" asp-action="Search" method="get">
-                        <div class="input-group">
-                            <input class="form-control" type="search" placeholder="Search movies" aria-label="Search" name="query" value="@ViewData["CurrentFilter"]">
-                            <div class="input-group-append">
-                                <button class="btn btn-outline-success" type="submit">Search</button>
+                    <div class="d-flex align-items-center justify-content-end">
+                        <form class="form-inline my-2 my-lg-0" asp-controller="Home" asp-action="Search" method="get">
+                            <div class="input-group">
+                                <input class="form-control" type="search" placeholder="Search movies" aria-label="Search" name="query" value="@ViewData["CurrentFilter"]">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-success" type="submit">Search</button>
+                                </div>
                             </div>
-                        </div>
-                    </form>
+                        </form>
+                        @if (User.Identity!.IsAuthenticated)
+                        {
+                            <form asp-controller="User" asp-action="Logout" method="post" class="form-inline my-2 my-lg-0">
+                                <button type="submit" class="btn btn-link text-dark" style="text-decoration: none; margin-left: 1rem;">Logout</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <a class="btn btn-link text-dark form-inline my-2 my-lg-0" asp-controller="User" asp-action="Login" style="text-decoration: none;">Login</a>
+                        }
+                    </div>
                 </div>
             </div>
         </nav>
@@ -46,7 +59,7 @@
 
 <footer class="border-top footer text-muted">
     <div class="container">
-        &copy; 2023 - webApplication - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2023 - Movie Central - 
     </div>
 </footer>
 

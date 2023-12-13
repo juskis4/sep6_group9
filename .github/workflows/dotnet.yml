@@ -1,4 +1,4 @@
-name: .NET
+name: CI Pipeline
 
 on:
   push:
@@ -6,34 +6,39 @@ on:
   pull_request:
     branches: [ "master" ]
 
+env:
+  DOTNET_VERSION: '6.0.x'
+
 jobs:
   build:
 
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v3 # Check out the code from your repository
+      - name: Check out code
+        uses: actions/checkout@v4 # Check out the code from your repository
 
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3 # Set up the .NET environment
-      with:
-        dotnet-version: '6.0.x' # Specify the desired .NET version
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v3 # Set up the .NET environment 
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+          
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
-    - name: Cache NuGet packages
-      uses: actions/cache@v2
-      with:
-        path: ~/.nuget/packages
-        key: ${{ runner.os }}-nuget-${{ hashFiles('**/packages.lock.json') }}
-        restore-keys: |
-          ${{ runner.os }}-nuget-
+      - name: Restore dependencies
+        run: dotnet restore # Restore project dependencies
 
-    - name: Restore dependencies
-      run: dotnet restore # Restore project dependencies
+      - name: Clean
+        run: dotnet clean # Clean the solution
 
-    - name: Clean
-      run: dotnet clean # Clean the solution
+      - name: Build app
+        run: dotnet build -c Release --no-restore # Build the project
 
-    - name: Build
-      run: dotnet build --no-restore # Build the project
-
-
+      - name: Run automated Tests
+        run: dotnet test -c Release --no-build
