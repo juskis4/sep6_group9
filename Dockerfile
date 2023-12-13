@@ -1,5 +1,4 @@
 ﻿# Build Stage
-# Use the official image as a parent image
 FROM mcr.microsoft.com/dotnet/sdk:6.0-focal AS build
 WORKDIR /source
 
@@ -10,7 +9,6 @@ RUN dotnet restore "./webApplication/webApplication.csproj" --disable-parallel
 RUN dotnet publish "./webApplication/webApplication.csproj" -c Release -o /app --no-restore
 
 # Serve Stage
-# Generate runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0-focal
 WORKDIR /app
 COPY --from=build /app ./
