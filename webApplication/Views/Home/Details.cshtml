@@ -29,6 +29,9 @@
                         <p class="card-text">
                             <strong>Genre:</strong> @Model.Details?.Genre
                         </p>
+                        <p class="card-text">
+                            <strong>Description:</strong> @Model.Details?.Plot
+                        </p>
                     </div>
                 </div>
             </div>
@@ -126,13 +129,13 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row comments-sec">
         <div class="col text-center">
             <h2>Comments section</h2>
         </div>
     </div>
-    
+
     <div class="row movie-card">
         <div class="col-12">
             <div class="comments-section">
@@ -146,7 +149,7 @@
             </div>
         </div>
     </div>
-    
+
     @if (User.Identity!.IsAuthenticated)
     {
         <div class="row movie-card">
